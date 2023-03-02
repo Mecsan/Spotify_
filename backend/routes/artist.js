@@ -8,6 +8,7 @@ const router = require("express").Router();
 
 router.get("/", getArtists);
 
+// why need of validateID
 router.get("/:id", validateId, oneArtist);
 
 router.post("/", authenticate, isadmin, upload.single('image'), addArtist);

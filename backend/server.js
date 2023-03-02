@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 
 const getImage = require("./helper/getimage");
-const { search } = require("./controllers/search");
+const { searchAll } = require("./controllers/search");
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
@@ -24,9 +24,8 @@ app.use("/song", songRoute);
 app.use("/artist", artistRoute);
 app.use("/playlist", playlistRoute);
 
-app.get("/search", search);
+app.get("/search", searchAll);
 app.get("/image/:name", getImage);
-
 
 if (process.env.NODE_ENV == "production") {
     app.use(express.static(__dirname + "/frontend/build"))
@@ -35,7 +34,6 @@ if (process.env.NODE_ENV == "production") {
         res.sendFile(__dirname + "/frontend/build/index.html");
     })
 }
-
 
 app.use(errhandler);
 

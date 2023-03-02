@@ -3,7 +3,7 @@ const { song } = require("../models/song");
 const { artistmodel } = require("../models/artist");
 const { playlist } = require("../models/playlist")
 
-const search = AsyncHandler(async (req, res) => {
+const searchAll = AsyncHandler(async (req, res) => {
     const q = req.query.q;
     let search = new RegExp(q, "i");
 
@@ -26,4 +26,4 @@ const search = AsyncHandler(async (req, res) => {
     res.json({ songs, playLists, artists });
 })
 
-module.exports = { search }
+module.exports = { searchAll }

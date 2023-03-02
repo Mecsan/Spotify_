@@ -14,7 +14,6 @@ connection.once('open', () => {
     gridBucket = new mongo.GridFSBucket(connection, {
         bucketName: 'images'
     })
-
 })
 
 const getsongs = asyncHandler(async (req, res) => {
@@ -39,6 +38,7 @@ const getOnesong = asyncHandler(async (req, res) => {
 })
 
 const getSongData = asyncHandler(async (req, res) => {
+
     // song stream api which will directly get audio data from gridfs
     let { name } = req.params;
     gfs.collection("songs");
@@ -147,24 +147,11 @@ const toggleLike = asyncHandler(async (req, res) => {
         let newuser = await user.findOneAndUpdate({ _id: req.user }, {
             $pull: { liked: id }
         }, { new: true })
-
-        let newsong = await song.findOneAndUpdate({ _id: id }, {
-            $inc: {
-                likes: -1
-            }
-        })
     } else {
         // add to like & increment like count
         let newuser = await user.findOneAndUpdate({ _id: req.user }, {
             $push: { liked: id }
         }, { new: true })
-
-        let newsong = await song.findOneAndUpdate({ _id: id }, {
-            $inc: {
-                likes: 1
-            }
-        })
-
     }
     res.json({ msg: id })
 })

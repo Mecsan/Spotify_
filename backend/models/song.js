@@ -20,10 +20,6 @@ const songScema = new mongo.Schema({
     },
     duration: {
         type: Number, 
-    },
-    likes: {
-        type: Number,
-        default: 0
     }
 
 }, {
