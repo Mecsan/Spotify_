@@ -38,14 +38,15 @@ function AuthProvider(props) {
             })
             if (res.ok) {
                 let data = await res.json();
-                dispatch({ type: "SET_TOKEN", data: token });
                 dispatch({ type: "SET_USER", data })
             } else {
-                dispatch({ type: "REMOVE" });
+                // token was invalid
+                dispatch({ type: "LOGOUT" });
                 localStorage.removeItem('spoti');
             }
             setload(false);
         }
+
         if (user.token) {
             fetchUser(user.token);
         } else {
@@ -53,6 +54,8 @@ function AuthProvider(props) {
         }
 
     }, [user.token])
+
+    // token = null indicates unauthenticated
 
     const [isload, setload] = useState(true);
 

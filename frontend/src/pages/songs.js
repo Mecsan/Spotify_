@@ -26,19 +26,7 @@ function Songs() {
         <div className="details">
           {
             songs ? <>
-              < h2 >All Songs</h2 >
-              {/* <div className="songs_container full">
-                <div className="songs">
-                  {
-                    songs.map((song, idx) => {
-                      return (
-                        <SongItem key={idx} song={song} songs={songs} />
-                      )
-                    })
-                  }
-                </div>
-              </div> */}
-
+              <h2>All Songs</h2 >
               <SongTable songs={songs} />
             </> : ""
           }

@@ -1,15 +1,11 @@
 import React from 'react'
 import { useContext } from 'react'
-import toast from 'react-hot-toast';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/auth'
 
 function AuthProtected({ children }) {
 
-  let { token } = useContext(AuthContext);
-  if (token == null) {
-    toast.error("Login to continue");
-  }
+  let { token,isload } = useContext(AuthContext);
 
   if (!token) {
     return (
@@ -17,7 +13,7 @@ function AuthProtected({ children }) {
     )
   }
 
-  if (token) return children;
+  if (!isload && token) return children;
 }
 
 export default AuthProtected

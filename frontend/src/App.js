@@ -10,8 +10,6 @@ import Library from './pages/library';
 import Player from './components/Player';
 import { Toaster } from 'react-hot-toast';
 import Song from './pages/song';
-import { useContext } from 'react';
-import { AuthContext } from './context/auth';
 import Artist from './pages/artist';
 import Queue from './pages/queue';
 import DashBoard from './pages/dashboard';
@@ -33,7 +31,7 @@ function App() {
       }} />
       <div className="main">
         <Router>
-          <Routes >
+          <Routes>
             <Route element={
               <>
                 <Nav />
@@ -67,6 +65,7 @@ function App() {
               <Route path='/songs' element={<Songs />} />
               <Route path="/playlists" element={<Playlists />} />
               <Route path="/artists" element={<ARtists />} />
+              
             </Route>
 
             <Route path='/dashboard/*' element={

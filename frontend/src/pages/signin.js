@@ -1,14 +1,14 @@
 import React from 'react'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { signin } from '../config/api';
 import { useContext } from 'react';
 import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
 
 function Singin() {
-    const { dispatch } = useContext(AuthContext);
+    const { token,dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     let schema = yup.object().shape({
         email: yup.string().email("invalid email").required("email is required"),
@@ -48,6 +48,7 @@ function Singin() {
     })
     return (
         <div className="main_container">
+            {token && <Navigate to="/" />}
 
             <div className="form-container">
 

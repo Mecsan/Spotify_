@@ -53,8 +53,8 @@ function PlaylistProvider(props) {
     }
 
     const [playlist, dispatch] = useReducer(myfun, {
-        playlists: [],
-        currPlayList: {}, // indicates current playlist info with songs also   
+        playlists: [], // user's all playlist
+        currPlayList: {}, //when we are on perticular playlist page this indicates current playlist info with songs also   
     })
 
     return (

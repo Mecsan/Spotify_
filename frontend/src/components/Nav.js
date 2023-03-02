@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { MdHomeFilled } from 'react-icons/md'
 import { FiSearch } from 'react-icons/fi'
 import { SiAddthis } from 'react-icons/si'
@@ -51,16 +51,14 @@ function Nav() {
   }
 
   const navigate = (str) => {
-
     traverse(str);
   }
 
   return (
     <div className="left">
-
       <div className="nav">
         <div className="logo" onClick={() => navigate("/")}>
-          <img src='./assests/logo.png' />
+          <img src={process.env.PUBLIC_URL + "/assests/logo.png"} />
         </div>
         <div className="links">
           <div className="link">

@@ -14,16 +14,13 @@ import toast from 'react-hot-toast';
 import SongItem from '../components/songitem';
 import { artist as artistApi } from '../config/api';
 
-
-
 function Song() {
 
     let { id } = useParams();
-
     const { dispatch, likes, islike: funIslike } = useContext(LikeContext);
     const { token } = useContext(AuthContext)
     const { dispatch: playSong } = useContext(ActiveContext);
-    const { playlists } = useContext(PlaylistContext)
+    const { playlists } = useContext(PlaylistContext);
 
     let [song, setsong] = useState(null);
     const [artist, setartist] = useState(null);
@@ -103,7 +100,6 @@ function Song() {
                             <div className="play_" onClick={play}>
                                 <BsFillPlayCircleFill color='#43b943' size={50} />
                             </div>
-                            {/* <span>{song.likes} likes </span> */}
 
                             <div className="like" onClick={handleClick}>
                                 {islike ?

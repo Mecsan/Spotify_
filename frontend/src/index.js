@@ -13,7 +13,7 @@ root.render(
         <AuthProvider>
             <PlaylistProvider>
                 <LikeProvider>
-                        <App />
+                    <App />
                 </LikeProvider>
             </PlaylistProvider>
         </AuthProvider>

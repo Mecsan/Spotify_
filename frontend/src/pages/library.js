@@ -21,6 +21,7 @@ function Library() {
         let data = await res.json();
         dispatch({ type: "ADD_PLAYLIST", data: data })
         toast.success("Playlist added");
+        // can be navigate to newly created playlist
     }
 
     return (

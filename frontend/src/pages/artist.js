@@ -44,6 +44,7 @@ function Artist() {
                                 <h1>{artist.artist.name}</h1>
                             </div>
                         </div>
+                        
                         <div className="play_option">
                             <div className="play_" onClick={play}>
                                 <BsFillPlayCircleFill color='#43b943' size={50} />

@@ -11,7 +11,6 @@ function Home() {
     const [artists, setartists] = useState(null);
     const [playlists, setplaylists] = useState(null);
 
-
     const navigate = useNavigate();
 
     let songLimit = 5;
@@ -52,7 +51,6 @@ function Home() {
         <>
             <div className="right">
                 <div className="details">
-
                     {
                         playlists ?
                             <>
