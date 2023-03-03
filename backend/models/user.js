@@ -15,7 +15,12 @@ const userScema = new mongo.Schema({
     },
     liked: {
         type: [mongo.Schema.Types.ObjectId],
-        ref:"songs",
+        ref: "songs",
+        default: []
+    },
+    likedList: {
+        type: [mongo.Schema.Types.ObjectId],
+        ref: "playlists",
         default: []
     },
     isAdmin: {

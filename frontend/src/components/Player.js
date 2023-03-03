@@ -148,7 +148,9 @@ function Player() {
             setlike(false);
         }
     }, [item, likes, token])
+
     let [start, setstart] = useState(0);
+
     return (
         <>
             {
@@ -293,8 +295,6 @@ function Player() {
                                 y: "700px",
                                 opacity: 0,
                             }}
-                            
- 
 
 
                             transition={{

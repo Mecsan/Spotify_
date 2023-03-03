@@ -65,7 +65,7 @@ function App() {
               <Route path='/songs' element={<Songs />} />
               <Route path="/playlists" element={<Playlists />} />
               <Route path="/artists" element={<ARtists />} />
-              
+
             </Route>
 
             <Route path='/dashboard/*' element={

@@ -143,12 +143,12 @@ const toggleLike = asyncHandler(async (req, res) => {
     let { id } = req.params;
     let check = await user.findOne({ _id: req.user });
     if (check.liked.find((ch) => ch == id)) {
-        // remove from like & decrement like count
+        // remove from like 
         let newuser = await user.findOneAndUpdate({ _id: req.user }, {
             $pull: { liked: id }
         }, { new: true })
     } else {
-        // add to like & increment like count
+        // add to like 
         let newuser = await user.findOneAndUpdate({ _id: req.user }, {
             $push: { liked: id }
         }, { new: true })

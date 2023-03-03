@@ -7,7 +7,7 @@ import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
 
 function Library() {
-    let { playlists,dispatch } = useContext(PlaylistContext);
+    let { playlists, dispatch } = useContext(PlaylistContext);
 
     const { token } = useContext(AuthContext)
     const addPlaylist = async () => {
@@ -28,6 +28,19 @@ function Library() {
         <div className="right">
 
             <div className="details">
+                <h2>Liked playlists</h2>
+                <div className="songs_container">
+
+                    <div className="songs">
+                        {
+                            playlists?.length ? playlists.map((song, idx) => {
+                                if (song.like) {
+                                    return <Playitem key={idx} item={song} />
+                                }
+                            }).filter(one => one) : null
+                        }
+                    </div>
+                </div>
                 <h2>Your playlists</h2>
 
 
@@ -41,11 +54,14 @@ function Library() {
                         </div>
                         {
                             playlists?.length ? playlists.map((song, idx) => {
+                                if (song.like) return;
                                 return <Playitem key={idx} item={song} />
-                            }) : null
+                            }).filter(one => one) : null
                         }
                     </div>
                 </div>
+
+
             </div>
         </div>
     )

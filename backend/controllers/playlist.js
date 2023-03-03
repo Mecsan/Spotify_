@@ -2,6 +2,7 @@ const { playlist } = require("../models/playlist");
 const asyncHandler = require("express-async-handler");
 const Myerror = require("../helper/customErr");
 const jwt = require("jsonwebtoken");
+const { user } = require("../models/user");
 
 const addPlayList = asyncHandler(async (req, res) => {
     let length = await playlist.countDocuments({ user: req.user, isAdmin: false });
@@ -135,6 +136,37 @@ const makePublic = asyncHandler(async (req, res) => {
     res.json({ msg: id })
 })
 
+
+const likePlaylist = asyncHandler(async (req, res) => {
+    let { id } = req.params;
+    let users = await user.findOne({ _id: req.user });
+
+    if (users.likedList.find((ch) => ch == id)) {
+        // remove from like 
+        let newuser = await user.findOneAndUpdate({ _id: req.user }, {
+            $pull: { likedList: id }
+        }, { new: true })
+        res.json({ msg: id, like: false })
+
+    } else {
+        // add to like 
+        let newuser = await user.findOneAndUpdate({ _id: req.user }, {
+            $push: { likedList: id }
+        }, { new: true })
+        res.json({ msg: id,like:true })
+    }
+})
+
+const getlikedList = asyncHandler(async (req, res) => {
+    let users = await user.findOne({ _id: req.user });
+    let likedIds = users.likedList;
+    let lists = await playlist.find({
+        _id: {
+            $in: likedIds
+        }
+    })
+    res.json(lists);
+})
 const getHomePlaylists = asyncHandler(async (req, res) => {
     const limit = req.query.limit
     let playlists = await playlist.find({ isAdmin: true, isPrivate: false }).sort("-createdAt").limit(
@@ -173,5 +205,7 @@ module.exports = {
     makePrivate,
     makePublic,
     getadminPlaylists,
-    addAdminPlaylist
+    addAdminPlaylist,
+    likePlaylist,
+    getlikedList
 }

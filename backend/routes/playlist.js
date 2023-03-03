@@ -14,6 +14,8 @@ const {
     getadminPlaylists,
     addAdminPlaylist,
     getHomePlaylists,
+    likePlaylist,
+    getlikedList
 } = require("../controllers/playlist");
 
 const authenticate = require('../middleware/authmiddleware');
@@ -30,6 +32,8 @@ Router.post("/admin", authenticate, isadmin, addAdminPlaylist)
 Router.get("/public/:id", authenticate, makePublic);
 Router.get("/private/:id", authenticate, makePrivate);
 
+Router.get("/like/:id", authenticate, validateId, likePlaylist);
+Router.get("/like", authenticate, getlikedList);
 Router.get("/:id", validateId, getOnePlayList);
 
 Router.put("/:id", authenticate, validateId, upload.single('image'), updatePlayList);

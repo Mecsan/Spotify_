@@ -15,7 +15,7 @@ function PlaylistProvider(props) {
             };
             case "ADD_PLAYLIST": return {
                 ...state,
-                playlists: [ action.data, ...state?.playlists]
+                playlists: [action.data, ...state?.playlists]
             };
             case "UPDATE_PLAYLIST": return {
                 ...state,
@@ -53,12 +53,29 @@ function PlaylistProvider(props) {
     }
 
     const [playlist, dispatch] = useReducer(myfun, {
-        playlists: [], // user's all playlist
+        playlists: [], // user's all playlist & liked playlist
         currPlayList: {}, //when we are on perticular playlist page this indicates current playlist info with songs also   
     })
 
+    const isliked = (id) => {
+        let res = playlist.playlists.find((one) => {
+            if (one._id == id) return true;
+        })
+        if (res && res.like) return true;
+        return false;
+    }
+
+    const isOwn = (id) => {
+        let res = playlist.playlists.find((one) => {
+            if (one._id == id) return true;
+        })
+        if (res == undefined) return false;
+        if (res && res.like) return false;
+        return true;
+    }
+
     return (
-        <PlaylistContext.Provider value={{ dispatch, ...playlist }}>
+        <PlaylistContext.Provider value={{ dispatch, ...playlist, isOwn, isliked }}>
             {props.children}
         </PlaylistContext.Provider>
     )

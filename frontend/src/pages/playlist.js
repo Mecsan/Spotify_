@@ -9,10 +9,12 @@ import { PlaylistContext } from '../context/playlist';
 import { ActiveContext } from '../context/active';
 import { AuthContext } from '../context/auth';
 import PlayListForm from '../components/form';
+import { AiFillAlert, AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 
 function Playlist() {
 
-  let { dispatch, currPlayList } = useContext(PlaylistContext)
+  let { dispatch, currPlayList, isOwn, isliked: checkLike, playlists } = useContext(PlaylistContext)
+
   let { token } = useContext(AuthContext);
   let { dispatch: setactive } = useContext(ActiveContext)
 
@@ -21,6 +23,12 @@ function Playlist() {
 
   let [isform, setform] = useState(false);
   const [hasPermission, setpermission] = useState(false);
+
+  const [islike, setlike] = useState(false);
+
+  useEffect(() => {
+    setlike(checkLike(id))
+  }, [playlists, id])
 
   const removeFrom = async (key) => {
     let res = await fetch(playlist + "/songs/" + id + "/" + key, {
@@ -90,6 +98,25 @@ function Playlist() {
     travers('/');
   }
 
+  const likePlaylist = async () => {
+    let res = await fetch(playlist + "like/" + id, {
+      method: "GET",
+      headers: {
+        "authorization": "berear " + token
+      }
+    });
+    const data = await res.json();
+    setlike(data.like);
+    if (data.like) {
+      dispatch({ type: "ADD_PLAYLIST", data: { like: true, ...currPlayList } });
+      toast("Added to library");
+    } else {
+      dispatch({ type: "DELETE_PLAYLIST", data: id });
+      toast("Removed from library");
+    }
+
+  }
+
   return (
     <div className="right">
       <div className="details">
@@ -104,7 +131,13 @@ function Playlist() {
 
             <div className="play_option">
               < BsFillPlayCircleFill color='#43b943' size={50} onClick={playPlaylist} />
-
+              {!isOwn(id) && <div className="like" onClick={likePlaylist}>
+                {
+                  islike ?
+                    <AiFillHeart size={30} color='green' />
+                    : <AiOutlineHeart size={30} />
+                }
+              </div>}
               {
                 hasPermission &&
                 <>
@@ -128,9 +161,6 @@ function Playlist() {
                 </>
 
               }
-
-
-
             </div>
 
             <SongTable
