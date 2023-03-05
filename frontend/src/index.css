@@ -86,7 +86,7 @@ body {
   cursor: pointer;
 }
 
-.center{
+.center {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,6 +94,18 @@ body {
   height: 50%;
 }
 
+.edit_profile {
+  background-color: rgb(69, 67, 67);
+  width: fit-content;
+  padding: 5px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.edit_profile:hover{
+  background-color: whitesmoke;
+  color: black;
+}
 .link div {
   color: gray;
 }
@@ -1537,7 +1549,7 @@ option {
   }
 
   .header {
-    padding:  10px;
+    padding: 10px;
     padding-top: 20px;
     background: #131313;
   }
@@ -1726,10 +1738,10 @@ option {
     padding: 20px 30px;
     padding-bottom: 40px;
     display: flex;
-    background-color:rgb(0, 0, 0) ;
+    background-color: rgb(0, 0, 0);
     flex-direction: column;
     gap: 20px;
-    justify-content:flex-end;
+    justify-content: flex-end;
   }
 
   .big-img {

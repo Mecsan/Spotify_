@@ -21,6 +21,8 @@ import Songs from './pages/songs';
 import Playlists from './pages/playlists';
 import ARtists from './pages/artists';
 import BottomNav from './components/bottomnav';
+import User from './pages/user';
+import Profile from './pages/profile';
 function App() {
 
   return (
@@ -55,11 +57,18 @@ function App() {
                 </AuthProtected>}
               />
 
+              <Route path='/profile' element={
+                <AuthProtected>
+                  <Profile />
+                </AuthProtected>
+              } />
+
               <Route path="/search/*" element={<Search />} />
 
               <Route path='/playlist/:id' element={<Playlist />} />
               <Route path='/song/:id' element={<Song />} />
               <Route path='/artist/:id' element={<Artist />} />
+              <Route path='/user/:id' element={<User />} />
 
               <Route path='/playing' element={<Queue />} />
               <Route path='/songs' element={<Songs />} />

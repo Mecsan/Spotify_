@@ -27,7 +27,7 @@ function Playitem({ item }) {
             <img src={image + item.image} alt="" />
             <div className="name">{item?.name}</div>
             <div className="desc">{
-                item?.desc.length < 30 ? item?.desc : item?.desc.substr(0, 30) + "..."
+                item?.desc?.length < 30 ? item?.desc : item?.desc?.substr(0, 30) + "..."
             }</div>
             <div className="play_hidden" onClick={(e) => {
                 fetchSongs();

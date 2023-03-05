@@ -38,6 +38,9 @@ function Header() {
                     localStorage.removeItem('spoti');
                     toast.success("Logout successfullly");
                   }}>Logout</div>
+                  <div onClick={() => {
+                    navigate("/profile")
+                  }}>Profile</div>
                   {user.isAdmin && <div onClick={() => navigate("/dashboard")}>Dashboard</div>}
                 </div>
               </div> :

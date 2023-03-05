@@ -8,7 +8,7 @@ import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
 
 function Singin() {
-    const { token,dispatch } = useContext(AuthContext);
+    const { token, dispatch } = useContext(AuthContext);
     const navigate = useNavigate();
     let schema = yup.object().shape({
         email: yup.string().email("invalid email").required("email is required"),
@@ -38,7 +38,6 @@ function Singin() {
                 toast.error("something went wrong", { id: tid })
                 return;
             }
-
             localStorage.setItem("spoti", data.msg);
             dispatch({ type: "SET_TOKEN", data: data.msg });
             toast.success("Signin successfullly", { id: tid });

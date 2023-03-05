@@ -31,7 +31,7 @@ function AuthProvider(props) {
     useEffect(() => {
 
         let fetchUser = async (token) => {
-            let res = await fetch(profile, {
+            let res = await fetch(profile+"token", {
                 headers: {
                     "authorization": "berear " + token
                 }

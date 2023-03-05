@@ -1,5 +1,6 @@
 import React from 'react'
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { image } from '../config/api';
 import { LikeContext } from '../context/likes';
 
@@ -8,6 +9,8 @@ function Upper({ item, setform, hasPermission = false, song, liked }) {
     // same component has been used to see likes page as well as to see & edit current user's playlist & to see other playlist & just play it.and also to see song details
 
     // hasPermission will only be true in case of current user seeing his playlist , so he can edit modify dlt etc
+
+    const navigate = useNavigate();
 
     let { likes } = useContext(LikeContext);
 
@@ -71,7 +74,10 @@ function Upper({ item, setform, hasPermission = false, song, liked }) {
                     </div> : null}
 
                     <div className="playlist_extra">
-                        {data.artist ? <span>{data.artist}</span> : null}
+                        {data.artist ? <span onClick={() => {
+                            if (item.artist) return;
+                            navigate("/user/" + item.user._id);
+                        }}>{data.artist}</span> : null}
                         {data.year ? <span>{data.year}</span> : null}
                         <span> {data.cn} songs</span>
                         <span>{data.duration}</span>

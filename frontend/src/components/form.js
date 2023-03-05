@@ -17,7 +17,7 @@ function PlayListForm({ setform, item, extra = () => { } }) {
     setname(item.name)
   }, [])
 
-  // link of image choosen by user
+  //image choosen by user
   let [image, setimage] = useState(null);
   let [file, setfile] = useState("");
   let imageInput = useRef(null);
