@@ -20,6 +20,7 @@ const {
 
 const authenticate = require('../middleware/authmiddleware');
 const isadmin = require('../middleware/isadmin');
+const isOwner = require('../middleware/isOwnerPlaylist');
 const validateId = require('../middleware/valiadteId');
 
 Router.get("/", authenticate, getPlayLists);
@@ -36,12 +37,12 @@ Router.get("/like/:id", authenticate, validateId, likePlaylist);
 Router.get("/like", authenticate, getlikedList);
 Router.get("/:id", validateId, getOnePlayList);
 
-Router.put("/:id", authenticate, validateId, upload.single('image'), updatePlayList);
+Router.put("/:id", authenticate, validateId, isOwner, upload.single('image'), updatePlayList);
 
-Router.delete("/:id", authenticate, validateId, dltPlayList);
+Router.delete("/:id", authenticate, validateId, isOwner, dltPlayList);
 
-Router.post("/songs/:id/:sid", authenticate, addSongToPlaylist);
+Router.post("/songs/:id/:sid", authenticate, isOwner, addSongToPlaylist);
 
-Router.delete("/songs/:id/:sid", authenticate, RemoveSongFromPlaylist);
+Router.delete("/songs/:id/:sid", authenticate, isOwner, RemoveSongFromPlaylist);
 
 module.exports = Router;
