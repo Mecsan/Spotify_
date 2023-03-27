@@ -1,5 +1,5 @@
 const mongo = require('mongoose');
-
+mongo.set("strictQuery", true)
 dbconnect = async () => {
     try {
         await mongo.connect(process.env.MONGO_CONNECT);

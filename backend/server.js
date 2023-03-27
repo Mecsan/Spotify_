@@ -37,4 +37,5 @@ if (process.env.NODE_ENV == "production") {
 
 app.use(errhandler);
 
-app.listen(process.env.PORT, () => console.log(`server running on ${process.env.PORT}`))
+const port = process.env.PORT || 2000
+app.listen(port, () => console.log(`server running on ${port}`))

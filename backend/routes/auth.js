@@ -18,10 +18,11 @@ Router.post("/login", login);
 
 Router.get("/token", authenticated, verifyToken)
 Router.put('/update', authenticated, upload.single('image'), updateProfile)
-Router.get("/:id", info);
 
 //admin
 Router.get("/all", authenticated, admin, getAllUSer);
+
+Router.get("/:id", info);
 
 Router.post("/", authenticated, admin, addUser);
 
