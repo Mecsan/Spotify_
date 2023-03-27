@@ -4,9 +4,9 @@ import toast from 'react-hot-toast';
 import { songToPlaylist } from '../config/api';
 import { AuthContext } from '../context/auth';
 
-function Options({ id, setoption = () => { }, playlists, cuurentPid = null }) {
+function Options({ id, setoption = null, playlists, cuurentPid = null }) {
     // id = songid
-    // playlists = user's playlists
+    // playlists = user's playlists / admin playlist
     // currentPid if any 
 
     const { token } = useContext(AuthContext);

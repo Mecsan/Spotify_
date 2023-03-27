@@ -1,14 +1,11 @@
 import React from 'react'
 import { useState } from 'react'
-import { useEffect } from 'react'
 import { useContext } from 'react'
 import { FaUserFriends } from 'react-icons/fa'
 import { TbUserPlus } from 'react-icons/tb'
-import { user } from '../../config/api'
 import { AdminContext } from '../../context/admincontent'
-import { AuthContext } from '../../context/auth'
-import UserForm from './userform'
-import UserTable from './usertable'
+import UserForm from '../../components/admin/userform'
+import UserTable from '../../components/admin/usertable'
 
 function Users() {
 

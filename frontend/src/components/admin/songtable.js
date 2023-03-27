@@ -9,8 +9,8 @@ import { AuthContext } from '../../context/auth'
 import toast from 'react-hot-toast'
 import { useState } from 'react'
 import { BsThreeDots, BsFillCaretRightFill } from 'react-icons/bs'
-import Options from '../../components/options'
-import { useLocation, useNavigate } from 'react-router-dom'
+import Options from '../options'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 
 function SongTable({ songs, edit = null }) {
@@ -22,9 +22,7 @@ function SongTable({ songs, edit = null }) {
 
   const [isoption, setoption] = useState(-1);
 
-  let location = useLocation();
-
-  let pid = location.pathname.split("/")[3];
+  const { id: pid } = useParams();
 
   const deleteSong = async (key) => {
     let res = await fetch(song + key, {
@@ -100,7 +98,9 @@ function SongTable({ songs, edit = null }) {
                       < div className="options">
                         <div className='addTolist'>
                           add to playlist <BsFillCaretRightFill />
-                          <Options id={song._id} setoption={setoption} playlists={playlists} cuurentPid={pid} />
+                          <Options
+                            id={song._id}
+                            setoption={setoption} playlists={playlists} cuurentPid={pid} />
                         </div>
                       </div>
                       : ""

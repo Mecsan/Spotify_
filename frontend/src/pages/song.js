@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import Upper from '../components/upper';
-import { song as songApi } from '../config/api';
+import { useNavigate, useParams } from 'react-router-dom'
+import { image, song as songApi } from '../config/api';
 import { BsFillPlayCircleFill } from 'react-icons/bs';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { LikeContext } from '../context/likes';
@@ -13,6 +12,7 @@ import { PlaylistContext } from '../context/playlist';
 import toast from 'react-hot-toast';
 import SongItem from '../components/songitem';
 import { artist as artistApi } from '../config/api';
+import SongTable from '../components/SongTable';
 
 function Song() {
 
@@ -25,6 +25,8 @@ function Song() {
     let [song, setsong] = useState(null);
     const [artist, setartist] = useState(null);
     const [islike, setlike] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         let fetchSong = async () => {
@@ -86,6 +88,13 @@ function Song() {
         playSong({ type: "SET_ACTIVE", data: song });
         playSong({ type: "SET_LIST", data: artist.songs })
     }
+    let countTime = (songs) => {
+        let time = 0;
+        songs?.forEach(like => {
+            time += parseInt(like?.duration)
+        });
+        return (time / 60).toFixed(2)
+    }
 
     return (
         <div className="right">
@@ -93,7 +102,30 @@ function Song() {
                 {
                     song && <>
 
-                        <Upper item={song} song={true} />
+                        <div className="playlist_cont">
+                            <div className="playlist_img">
+                                <img src={image + song.image} />
+                            </div>
+
+
+                            <div className="playlist_info">
+                                <span>
+                                    song
+                                </span>
+                                <h1 >
+                                    {song.name}
+                                </h1>
+
+                                <div className="playlist_extra">
+                                    <span onClick={() => {
+                                        navigate("/artist/" + song.artist._id);
+                                    }}>{song.artist.name}</span>
+                                    <span>{song?.createdAt?.substr(0, 4)}</span>
+                                    <span>{countTime([song])}</span>
+                                </div>
+                            </div>
+
+                        </div >
 
                         <div className="play_option">
 
@@ -107,17 +139,9 @@ function Song() {
                                     <AiOutlineHeart size={30} />
                                 }
                             </div>
-
-                            {token && playlists?.length ?
-                                <div className="play_">
-                                    <div className='addTolist'>Add to
-                                        <Options id={song._id} playlists={playlists} />
-                                    </div>
-                                </div>
-                                : ""
-                            }
-
                         </div>
+
+                        <SongTable songs={[song]} />
 
                         {
                             artist && artist.songs.filter((song, idx) => {

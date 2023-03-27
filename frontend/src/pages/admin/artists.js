@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { AdminContext } from '../../context/admincontent';
 import { FaUserFriends } from 'react-icons/fa';
 import { MdOutlineAddCircleOutline } from 'react-icons/md'
-import ArtissTable from './artisttable';
-import ArtistForm from './artistform';
+import ArtissTable from '../../components/admin/artisttable';
+import ArtistForm from '../../components/admin/artistform';
 
 
 

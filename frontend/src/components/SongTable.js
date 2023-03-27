@@ -5,9 +5,7 @@ import Songrow from './songrow'
 function SongTable({ songs, removeFrom = () => { }, permission = false }) {
 
   let [isoption, setoption] = useState(-1);
-
- 
- 
+  
   return (
     <>
       {

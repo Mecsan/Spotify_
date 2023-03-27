@@ -2,19 +2,24 @@ import React from 'react'
 import { useEffect } from 'react';
 import { useContext } from 'react';
 import { BsThreeDots, BsFillPlayCircleFill } from 'react-icons/bs'
-
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'
 import PlayListForm from '../../components/form';
-import Upper from '../../components/upper';
 import { AdminContext } from '../../context/admincontent';
 import { PlaylistContext } from '../../context/playlist';
-import { playlist } from '../../config/api';
-import SongTable from './songtable';
+import { image, playlist } from '../../config/api';
+import SongTable from '../../components/admin/songtable';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../context/auth';
 
 function Playlist() {
+  let countTime = (songs) => {
+    let time = 0;
+    songs?.forEach(like => {
+      time += parseInt(like?.duration)
+    });
+    return (time / 60).toFixed(2)
+  }
 
   let { id } = useParams();
   const { dispatch: playlistdispathc, currPlayList } = useContext(PlaylistContext);
@@ -71,11 +76,34 @@ function Playlist() {
         {
           currPlayList ?
             <>
-              <Upper
-                item={currPlayList}
-                hasPermission={true}
-                setform={setform}
-              />
+
+
+              <div className="playlist_cont pointer"  >
+                <div className="playlist_img" onClick={setform}>
+                  <img src={image + currPlayList.image} />
+                </div>
+                <div className="playlist_info">
+                  <span>
+                    playlist
+                  </span>
+                  <h1 onClick={setform}>
+                    {currPlayList?.name}
+                  </h1>
+                  {currPlayList?.desc ? <div className="playlist_desc" onClick={setform}>
+                    {currPlayList?.desc}
+                  </div> : null}
+
+                  <div className="playlist_extra">
+                    <span onClick={() => {
+                      if (currPlayList.isAdmin) return;
+                      travers("/user/" + currPlayList.user._id);
+                    }}>{currPlayList?.isAdmin ? "✔ Spotify ✔" : currPlayList?.user?.name}</span>
+                    <span>{currPlayList?.createdAt?.substr(0, 4)}</span>
+                    <span>{currPlayList?.songs?.length} songs</span>
+                    <span> {countTime(currPlayList.songs)}</span>
+                  </div>
+                </div>
+              </div>
 
               {
                 isform && <PlayListForm setform={setform} item={currPlayList} extra={update} />

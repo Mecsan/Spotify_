@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { BsMusicNoteBeamed } from 'react-icons/bs'
 import { MdOutlineAddCircleOutline } from 'react-icons/md'
 import { AdminContext } from '../../context/admincontent';
-import SongForm from './songform';
-import SongTable from './songtable';
+import SongForm from '../../components/admin/songform';
+import SongTable from '../../components/admin/songtable';
 
 function Songs() {
   const [form, setform] = useState(false);

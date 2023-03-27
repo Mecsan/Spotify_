@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { BsThreeDots, BsFillCaretRightFill } from 'react-icons/bs'
-import PlayLists from './options';
+import Options from './options';
 import { LikeContext } from '../context/likes';
 import { ActiveContext } from '../context/active';
 import { likeSong } from '../util/likesong'
 import { PlaylistContext } from '../context/playlist';
 import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { image } from '../config/api';
 
 function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission }) {
@@ -18,9 +18,7 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
     const { token } = useContext(AuthContext)
     let [islike, setlike] = useState(false);
 
-    let location = useLocation();
-
-    let cuurentPid = location.pathname.split("/")[1];
+    const { id: pid } = useParams();
 
     const navigate = useNavigate();
 
@@ -76,11 +74,11 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
         toast.success("added to queue");
     }
 
-  
+
 
     return (
         <>
-            <div   className={song._id == item?._id ? "song_row playing" : "song_row"}
+            <div className={song._id == item?._id ? "song_row playing" : "song_row"}
                 onMouseLeave={() => setoption(-1)}
             >
                 <span>{id}</span>
@@ -146,7 +144,12 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
                                 }
                                 <div className='addTolist'>
                                     add to playlist <BsFillCaretRightFill />
-                                    <PlayLists playlists={playlists} id={song._id} setoption={setoption} cuurentPid={cuurentPid} />
+                                    <Options
+                                        playlists={playlists}
+                                        id={song._id}
+                                        setoption={setoption}
+                                        cuurentPid={pid}
+                                    />
                                 </div>
                             </div>
                             : ""

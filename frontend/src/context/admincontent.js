@@ -113,6 +113,7 @@ function AdminProvider({ children }) {
         artists: [],
         playlists: []
     })
+    
     let fetchSongs = async () => {
         let res = await fetch(song);
         let data = await res.json();
@@ -121,7 +122,7 @@ function AdminProvider({ children }) {
         }
     }
     const fetchUsers = async () => {
-        let res = await fetch(user + "/all", {
+        let res = await fetch(user + "all/", {
             headers: {
                 "authorization": "berear " + token
             }
@@ -138,7 +139,7 @@ function AdminProvider({ children }) {
     }
 
     const fetchAdminPlaylists = async () => {
-        let res = await fetch(playlist + "/admin", {
+        let res = await fetch(playlist + "admin/", {
             headers: {
                 "authorization": "berear " + token
             }

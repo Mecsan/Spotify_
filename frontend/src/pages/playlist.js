@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Upper from '../components/upper';
 import { BsFillPlayCircleFill, BsThreeDots } from 'react-icons/bs'
 import SongTable from '../components/SongTable';
 import toast from 'react-hot-toast';
-import { playlist, playlist as some } from '../config/api'
+import { image, playlist, playlist as some } from '../config/api'
 import { PlaylistContext } from '../context/playlist';
 import { ActiveContext } from '../context/active';
 import { AuthContext } from '../context/auth';
@@ -21,7 +20,7 @@ function Playlist() {
   let { id } = useParams();
   let travers = useNavigate();
 
-  let [isform, setform] = useState(false);
+  let [isform, openForm] = useState(false);
   const [hasPermission, setpermission] = useState(false);
 
   const [islike, setlike] = useState(false);
@@ -117,17 +116,46 @@ function Playlist() {
 
   }
 
+  let countTime = (songs) => {
+    let time = 0;
+    songs?.forEach(like => {
+      time += parseInt(like?.duration)
+    });
+    return (time / 60).toFixed(2)
+  }
   return (
     <div className="right">
       <div className="details">
         {
           currPlayList ? <>
 
-            <Upper
-              item={currPlayList}
-              hasPermission={hasPermission}
-              setform={setform}
-            />
+            <div className={hasPermission ? "playlist_cont pointer" : "playlist_cont"
+            }>
+              <div className="playlist_img" onClick={openForm}>
+                <img src={image + currPlayList.image} />
+              </div>
+              <div className="playlist_info">
+                <span>
+                  playlist
+                </span>
+                <h1 onClick={openForm}>
+                  {currPlayList?.name}
+                </h1>
+                {currPlayList?.desc ? <div className="playlist_desc" onClick={openForm}>
+                  {currPlayList?.desc}
+                </div> : null}
+
+                <div className="playlist_extra">
+                  <span onClick={() => {
+                    if (currPlayList.isAdmin) return;
+                    travers("/user/" + currPlayList.user._id);
+                  }}>{currPlayList?.isAdmin ? "✔ Spotify ✔" : currPlayList?.user?.name}</span>
+                  <span>{currPlayList?.createdAt?.substr(0, 4)}</span>
+                  <span>{currPlayList?.songs?.length} songs</span>
+                  <span> {countTime(currPlayList.songs)}</span>
+                </div>
+              </div>
+            </div>
 
             <div className="play_option">
               < BsFillPlayCircleFill color='#43b943' size={50} onClick={playPlaylist} />
@@ -150,7 +178,7 @@ function Playlist() {
                           currPlayList?.isPrivate ? "Make Public" : "Make Private"
                         }
                       </div>
-                      <div onClick={() => setform(true)}>Edit playlist</div>
+                      <div onClick={() => openForm(true)}>Edit playlist</div>
                       <div onClick={deletePlaylist}>Delele this playlist</div>
                     </div>
                   </div>
@@ -159,7 +187,6 @@ function Playlist() {
                   }
                   </div>
                 </>
-
               }
             </div>
 
@@ -170,7 +197,7 @@ function Playlist() {
             />
 
             {
-              isform && <PlayListForm setform={setform} item={currPlayList} extra={update} />
+              isform && <PlayListForm setform={openForm} item={currPlayList} extra={update} />
             }
           </> : null
 
@@ -179,7 +206,7 @@ function Playlist() {
 
       </div>
 
-    </div>
+    </div >
   )
 }
 
