@@ -18,6 +18,9 @@ function ArtissTable({ artists, edit }) {
   }
 
   const deleteArtist = async (key) => {
+    let ans = window.confirm("are u sure wanted to delete?");
+    if (ans == false) return;
+    let tid = toast.loading("deleting artist...")
     let res = await fetch(artist + key, {
       method: "DELETE",
       headers: {
@@ -26,13 +29,13 @@ function ArtissTable({ artists, edit }) {
     })
 
     if (!res.ok) {
-      toast.error("something went wrong");
+      toast.error("something went wrong", { id: tid });
       return;
     }
 
     let data = await res.json();
     dispatch({ type: "DELETE_ARTIST", data: key });
-    toast.success("artist deleted successfully");
+    toast.success("artist deleted successfully",{ id: tid });
   }
   return (
     <div className="table" >

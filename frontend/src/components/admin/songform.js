@@ -11,6 +11,8 @@ import { AdminContext } from '../../context/admincontent';
 import Select from 'react-select';
 import { AuthContext } from '../../context/auth';
 import toast from 'react-hot-toast'
+import { Oval, TailSpin } from 'react-loader-spinner';
+import Loader from './loader';
 
 function SongForm({ setform, item }) {
 
@@ -20,6 +22,7 @@ function SongForm({ setform, item }) {
     const [image, setimage] = useState(null);
     const [imagefile, setimagefile] = useState(null);
     const [songfile, setsongfile] = useState(null);
+    const [load, setload] = useState(false);
 
     const imageInput = useRef(null);
     const songInput = useRef(null);
@@ -62,7 +65,7 @@ function SongForm({ setform, item }) {
     }
 
     const addSong = async (formdata) => {
-
+        setload(true)
         let res = await fetch(song, {
             method: "POST",
             headers: {
@@ -72,16 +75,19 @@ function SongForm({ setform, item }) {
         })
 
         if (!res.ok) {
+            setload(false)
             toast.error("something went wrong");
             return;
         }
         let data = await res.json();
         setform(false);
+        setload(false)
         dispatch({ type: "ADD_SONG", data: data });
         toast.success("song added successfully");
     }
 
     const updatesong = async (formdata) => {
+        setload(true)
 
         let res = await fetch(song + item._id, {
             method: "PUT",
@@ -92,11 +98,13 @@ function SongForm({ setform, item }) {
         })
 
         if (!res.ok) {
+            setload(false)
             toast.error("something went wrong");
             return;
         }
         let data = await res.json();
         setform(false);
+        setload(false);
         dispatch({ type: "UPDATE_SONG", data: data });
         toast.success("song updated successfully");
     }
@@ -133,87 +141,109 @@ function SongForm({ setform, item }) {
 
     }
     return (
-        <div className="overlay" onClick={(e) => {
-            if (e.target.classList.contains("overlay")) {
-                setform(false);
-            }
-        }}>
-            <div className="playlist_form">
-                <div className='head'>
-                    <h3>Edit details</h3>
-                    <div className="close_form" onClick={() => setform(false)}>
-                        <MdOutlineClose color='white' size={27} />
-                    </div>
-                </div>
-
-                <div className='body'>
-                    <div className='image'>
-                        <div className="image_overlay" onClick={() => imageInput.current.click()}>
-                            <RiImageEditLine size={50} />
-                            <span>Choose image</span>
+        <>
+            <div className="overlay" onClick={(e) => {
+                if (load) return;
+                if (e.target.classList.contains("overlay")) {
+                    setform(false);
+                }
+            }}>
+                <div className="playlist_form">
+                    <div className='head'>
+                        <h3>Edit details</h3>
+                        <div className="close_form" onClick={() => setform(false)}>
+                            <MdOutlineClose color='white' size={27} />
                         </div>
-                        {
-                            image ? <img src={image} /> :
-                                <>{
-                                    form.values.image ?
-                                        <img src={imageapi + form.values.image} />
-                                        : null
-                                }
-                                </>
-
-                        }
                     </div>
-                    <div className='input'>
 
-                        <input type='text' name='name' placeholder='name' onChange={form.handleChange} value={form.values.name} />
-
-                        <Select name='artist'
-                            styles={{
-                                control: (styles, state) => {
-                                    return {
-                                        ...styles,
-                                        backgroundColor: "#80808051",
+                    <div className='body'>
+                        <div className='image'>
+                            <div className="image_overlay" onClick={() => imageInput.current.click()}>
+                                <RiImageEditLine size={50} />
+                                <span>Choose image</span>
+                            </div>
+                            {
+                                image ? <img src={image} /> :
+                                    <>{
+                                        form.values.image ?
+                                            <img src={imageapi + form.values.image} />
+                                            : null
                                     }
-                                }
-                                ,
-                                option: (pre, state) => {
-                                    return {
-                                        ...pre,
-                                        padding: "0px"
+                                    </>
+
+                            }
+                        </div>
+                        <div className='input'>
+
+                            <input type='text' name='name' placeholder='name' onChange={form.handleChange} value={form.values.name} />
+
+                            <Select name='artist'
+                                styles={{
+                                    control: (styles, state) => {
+                                        return {
+                                            ...styles,
+                                            backgroundColor: "#80808051",
+                                        }
                                     }
-                                }
-                            }}
-                            placeholder="Select artist"
-                            value={form.values.artist}
-                            onChange={(some) => {
-                                form.setFieldValue('artist', some);
-                            }}
-                            options={artists}
-                            formatOptionLabel={(artist) => {
-                                return (
-                                    <div className='artist-option'>
-                                        <img src={imageapi + artist.logo} />
-                                        {artist.name}</div>
-                                )
-                            }} />
+                                    ,
+                                    option: (pre, state) => {
+                                        return {
+                                            ...pre,
+                                            padding: "0px"
+                                        }
+                                    }
+                                }}
+                                placeholder="Select artist"
+                                value={form.values.artist}
+                                onChange={(some) => {
+                                    form.setFieldValue('artist', some);
+                                }}
+                                options={artists}
+                                formatOptionLabel={(artist) => {
+                                    return (
+                                        <div className='artist-option'>
+                                            <img src={imageapi + artist.logo} />
+                                            {artist.name}</div>
+                                    )
+                                }} />
 
 
 
-                        <input ref={imageInput} name='image' type="file" hidden onChange={getImage} />
+                            <input ref={imageInput} name='image' type="file" hidden onChange={getImage} />
 
-                        <input ref={songInput} name="song" type="file" hidden onChange={getsong} />
+                            <input ref={songInput} name="song" type="file" hidden onChange={getsong} />
 
-                        <div className='choose-song' onClick={() => songInput.current.click()}> <FaCloudUploadAlt size={30} /> Choose song</div>
-                        {
-                            songfile ? <span className='songinfo'>{songfile.name}</span> : null
-                        }
+                            <div className='choose-song' onClick={() => songInput.current.click()}> <FaCloudUploadAlt size={30} /> Choose song</div>
+                            {
+                                songfile ? <span className='songinfo'>{songfile.name}</span> : null
+                            }
+                        </div>
                     </div>
+
+                    {
+                        load ?
+                            <Oval
+                                height={40}
+                                width={40}
+                                color="#4fa94d"
+                                visible={true}
+                                ariaLabel='oval-loading'
+                                secondaryColor="#4fa94d"
+                                strokeWidth={8}
+                                strokeWidthSecondary={8}
+                            />
+                            :
+                            <input type='submit' value={item == null ? "Add user" : "Update user"} onClick={() => form.submitForm()} className="submit" />
+                    }
+
+
+
+
                 </div>
-
-                <input type='submit' value={item == null ? "Add user" : "Update user"} onClick={() => form.submitForm()} className="submit" />
-
             </div>
-        </div>
+            {load ? <Loader /> : null}
+        </>
+
     )
 }
 

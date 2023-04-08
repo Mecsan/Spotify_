@@ -25,6 +25,9 @@ function SongTable({ songs, edit = null }) {
   const { id: pid } = useParams();
 
   const deleteSong = async (key) => {
+    let ans = window.confirm("are u sure wanted to delete?");
+    if (ans == false) return;
+    let tid = toast.loading("deleting song...");
     let res = await fetch(song + key, {
       method: "DELETE",
       headers: {
@@ -33,9 +36,9 @@ function SongTable({ songs, edit = null }) {
     })
     if (res.ok) {
       dispatch({ type: "DELETE_SONG", data: key })
-      toast.success("song deleleted");
+      toast.success("song deleleted", { id: tid });
     } else {
-      toast.error("something went wrong")
+      toast.error("something went wrong", { id: tid })
     }
 
   }
@@ -81,29 +84,29 @@ function SongTable({ songs, edit = null }) {
                       </div>
                     </> : null
                 }
-                </div>
-                <div className="playlist_option">
+              </div>
+              <div className="playlist_option">
 
-                  <BsThreeDots onClick={(e) => {
-                    setoption(id)
-                  }} />
+                <BsThreeDots onClick={(e) => {
+                  setoption(id)
+                }} />
 
-                  {
-                    isoption == id && playlists?.length ?
-                      < div className="options">
-                        <div className='addTolist'>
-                          add to playlist <BsFillCaretRightFill />
-                          <Options
-                            id={song._id}
-                            setoption={setoption}
-                            playlists={playlists}
-                            cuurentPid={pid}
-                          />
-                        </div>
+                {
+                  isoption == id && playlists?.length ?
+                    < div className="options">
+                      <div className='addTolist'>
+                        add to playlist <BsFillCaretRightFill />
+                        <Options
+                          id={song._id}
+                          setoption={setoption}
+                          playlists={playlists}
+                          cuurentPid={pid}
+                        />
                       </div>
-                      : ""
-                  }
-                </div>
+                    </div>
+                    : ""
+                }
+              </div>
             </div>
           )
         })

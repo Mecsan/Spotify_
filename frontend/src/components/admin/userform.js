@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { MdOutlineClose } from 'react-icons/md'
 import { useFormik } from 'formik';
 import { user } from '../../config/api';
@@ -6,14 +6,17 @@ import * as yup from 'yup';
 import { AuthContext } from '../../context/auth';
 import toast from 'react-hot-toast';
 import { AdminContext } from '../../context/admincontent';
-import { useEffect } from 'react';
+import Loader from './loader';
 
 function UserForm({ setform, item }) {
 
     const { token } = useContext(AuthContext);
     const { dispatch } = useContext(AdminContext);
+    const [load, setload] = useState(false);
 
     const updateuser = async () => {
+        setload(true)
+
         let res = await fetch(user + item._id, {
             method: "PUT",
             headers: {
@@ -24,16 +27,21 @@ function UserForm({ setform, item }) {
         })
 
         if (!res.ok) {
+            setload(false)
             toast.error("something went wrong");
             return;
         }
         let data = await res.json();
         setform(false);
+        setload(false)
+
         dispatch({ type: "UPDATE_USER", data: data });
         toast.success("user updated successfully");
     }
 
     const Adduser = async () => {
+        setload(true)
+
         let res = await fetch(user, {
             method: "POST",
             headers: {
@@ -44,10 +52,13 @@ function UserForm({ setform, item }) {
         })
 
         if (!res.ok) {
+            setload(false)
+
             toast.error("something went wrong");
             return;
         }
         let data = await res.json();
+        setload(false)
         setform(false);
         dispatch({ type: "ADD_USER", data: data });
         toast.success("user added successfully");
@@ -86,7 +97,7 @@ function UserForm({ setform, item }) {
 
         onSubmit: async (value) => {
             const s = await validate(value);
-            if(!s) return;
+            if (!s) return;
             if (item == null) {
                 Adduser();
             } else {
@@ -97,36 +108,41 @@ function UserForm({ setform, item }) {
     })
 
     return (
-        <div className="overlay" onClick={(e) => {
-            if (e.target.classList.contains("overlay")) {
-                setform(false);
-            }
-        }}>
-            <div className="playlist_form">
-                <div className='head'>
-                    <h3>Edit details</h3>
-                    <div className="close_form" onClick={() => setform(false)}>
-                        <MdOutlineClose color='white' size={27} />
+        <>
+            <div className="overlay" onClick={(e) => {
+                if (load) return;
+                if (e.target.classList.contains("overlay")) {
+                    setform(false);
+                }
+            }}>
+                <div className="playlist_form">
+                    <div className='head'>
+                        <h3>Edit details</h3>
+                        <div className="close_form" onClick={() => setform(false)}>
+                            <MdOutlineClose color='white' size={27} />
+                        </div>
                     </div>
-                </div>
 
-                <div className='body'>
+                    <div className='body'>
 
-                    <div className='input'>
-                        <input type='text' name='name' placeholder='name' onChange={form.handleChange} value={form.values.name} />
-                        <input name='mail' type='text' placeholder='mail' onChange={form.handleChange} value={form.values.mail} />
-                        <input name='password' type='text' placeholder='password' onChange={form.handleChange} value={form.values.password} />
-                        <select name='isAdmin' value={form.values.isAdmin} onChange={form.handleChange}>
-                            <option value={true}>admin</option>
-                            <option value={false}>normal user</option>
-                        </select>
+                        <div className='input'>
+                            <input type='text' name='name' placeholder='name' onChange={form.handleChange} value={form.values.name} />
+                            <input name='mail' type='text' placeholder='mail' onChange={form.handleChange} value={form.values.mail} />
+                            <input name='password' type='text' placeholder='password' onChange={form.handleChange} value={form.values.password} />
+                            <select name='isAdmin' value={form.values.isAdmin} onChange={form.handleChange}>
+                                <option value={true}>admin</option>
+                                <option value={false}>normal user</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <input type='submit' value={item == null ? "Add user" : "Update user"} onClick={() => form.submitForm()} className="submit" />
+
                 </div>
-
-                <input type='submit' value={item == null ? "Add user" : "Update user"} onClick={() => form.submitForm()} className="submit" />
-
             </div>
-        </div>
+            {load ? <Loader /> : null}
+        </>
+
     )
 }
 

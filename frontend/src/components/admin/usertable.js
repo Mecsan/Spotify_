@@ -7,60 +7,63 @@ import { AdminContext } from '../../context/admincontent'
 import toast from 'react-hot-toast'
 import { AuthContext } from '../../context/auth'
 
-function UserTable({ users,edit }) {
+function UserTable({ users, edit }) {
 
-  const { dispatch} = useContext(AdminContext)
-  const {token } = useContext(AuthContext)
+  const { dispatch } = useContext(AdminContext)
+  const { token } = useContext(AuthContext)
 
   const deleteUser = async (key) => {
-    let res = await fetch(user+key, {
-      method:"DELETE",
+    let ans = window.confirm("are u sure wanted to delete?");
+    if (ans == false) return;
+    let tid = toast.loading("deleting user ...")
+    let res = await fetch(user + key, {
+      method: "DELETE",
       headers: {
         "authorization": "berear " + token
       }
     })
-    if(res.ok){
-      dispatch({type:"DELETE_USER",data:key})
-      toast.success("user deleleted");
-    }else{
-      toast.error("something went wrong")
+    if (res.ok) {
+      dispatch({ type: "DELETE_USER", data: key })
+      toast.success("user deleleted", { id: tid });
+    } else {
+      toast.error("something went wrong", { id: tid })
     }
 
   }
 
-return (
-  <div className="usertable">
-    
-    <div className="heading">
-      <span>idx</span>
-      <div>Mail</div>
-      <div>Name</div>
-      <div>Role</div>
-      <div>option</div>
-    </div>
+  return (
+    <div className="usertable">
 
-    {
-      users.map((user, idx) => {
-        return (
-          <div key={idx} className='userrow'>
-            <span>{idx + 1}</span>
-            <div>{user.mail}</div>
-            <div>{user.name}</div>
-            <div>{user.isAdmin ? "admin" : "user"}</div>
-            <div className='user-option'>
-              <div className="dlt" onClick={() => deleteUser(user._id)}>
-                <MdDeleteOutline />
-              </div>
-              <div className="up" onClick={()=>edit(user)}>
-                <FaUserEdit />
+      <div className="heading">
+        <span>idx</span>
+        <div>Mail</div>
+        <div>Name</div>
+        <div>Role</div>
+        <div>option</div>
+      </div>
+
+      {
+        users.map((user, idx) => {
+          return (
+            <div key={idx} className='userrow'>
+              <span>{idx + 1}</span>
+              <div>{user.mail}</div>
+              <div>{user.name}</div>
+              <div>{user.isAdmin ? "admin" : "user"}</div>
+              <div className='user-option'>
+                <div className="dlt" onClick={() => deleteUser(user._id)}>
+                  <MdDeleteOutline />
+                </div>
+                <div className="up" onClick={() => edit(user)}>
+                  <FaUserEdit />
+                </div>
               </div>
             </div>
-          </div>
-        )
-      })
-    }
-  </div>
-)
+          )
+        })
+      }
+    </div>
+  )
 }
 
 export default UserTable
