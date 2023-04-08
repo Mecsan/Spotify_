@@ -46,13 +46,6 @@ function SongTable({ songs, edit = null }) {
   return (
     <div className="table" >
 
-      <div className="head_row">
-        <span>#</span>
-        <span className='t_name'>title</span>
-        <span className='t_artist'>artist</span>
-        <span><BiTimeFive size={20} /></span>
-        <span>option</span>
-      </div>
 
       {
         songs.map((song, id) => {
@@ -63,6 +56,7 @@ function SongTable({ songs, edit = null }) {
                 <img src={image + song?.image} />
                 <span>
                   {song.name}
+                  <div className="small_artist">{song.artist.name}</div>
                 </span>
               </div>
               <div className='t_artist' onClick={() => {
@@ -72,8 +66,9 @@ function SongTable({ songs, edit = null }) {
                   {song.artist.name}
                 </span>
               </div>
-              <div>2:30</div>
-
+              <div>
+                {isNaN(song.duration / 60) ? 0 : (song.duration / 60).toFixed(2)}
+              </div>
               <div className='user-option'>
                 {
                   edit != null ?
@@ -86,7 +81,7 @@ function SongTable({ songs, edit = null }) {
                       </div>
                     </> : null
                 }
-
+                </div>
                 <div className="playlist_option">
 
                   <BsThreeDots onClick={(e) => {
@@ -100,19 +95,15 @@ function SongTable({ songs, edit = null }) {
                           add to playlist <BsFillCaretRightFill />
                           <Options
                             id={song._id}
-                            setoption={setoption} playlists={playlists} cuurentPid={pid} />
+                            setoption={setoption}
+                            playlists={playlists}
+                            cuurentPid={pid}
+                          />
                         </div>
                       </div>
                       : ""
                   }
-
                 </div>
-
-
-              </div>
-
-
-
             </div>
           )
         })

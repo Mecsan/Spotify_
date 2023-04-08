@@ -122,6 +122,7 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
                 <div>{
                     isNaN(song.duration / 60) ? 0 : (song.duration / 60).toFixed(2)
                 }</div>
+                
                 <div className="playlist_option" >
                     <BsThreeDots onClick={(e) => {
                         setoption(id)

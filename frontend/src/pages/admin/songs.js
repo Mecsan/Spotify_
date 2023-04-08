@@ -16,8 +16,6 @@ function Songs() {
     setactive(item);
   }
   const { songs } = useContext(AdminContext);
-
-
   return (
     <div className="right">
       <div className="songstabel details">

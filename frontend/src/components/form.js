@@ -29,6 +29,10 @@ function PlayListForm({ setform, item, extra = () => { } }) {
   }
 
   const updatePlaylist = async () => {
+    if(name==""){
+      toast.error("invalid name")
+      return;
+    }
 
     const tid = toast.loading("updating task", {
       duration: 100000

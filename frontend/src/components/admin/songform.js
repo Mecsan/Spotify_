@@ -31,6 +31,7 @@ function SongForm({ setform, item }) {
     }
 
     const getsong = (e) => {
+        // check for size of song
         setsongfile(e.target.files[0]);
         let src = URL.createObjectURL(e.target.files[0]);
         let forTime = new Audio(src);
@@ -40,7 +41,28 @@ function SongForm({ setform, item }) {
         }, 100);
     }
 
+    const valiadte = (obj) => {
+        if (obj.name == "") {
+            toast.error("name is required");
+            return false;
+        }
+        if (obj.artist == "select") {
+            toast.error("select any artist");
+            return false;
+        }
+        if (obj.image == null && imagefile == null) {
+            toast.error("choose image for song");
+            return false;
+        }
+        if (obj.song == null && songfile == null) {
+            toast.error("upload song file");
+            return false;
+        }
+        return true;
+    }
+
     const addSong = async (formdata) => {
+
         let res = await fetch(song, {
             method: "POST",
             headers: {
@@ -60,6 +82,7 @@ function SongForm({ setform, item }) {
     }
 
     const updatesong = async (formdata) => {
+
         let res = await fetch(song + item._id, {
             method: "PUT",
             headers: {
@@ -88,6 +111,7 @@ function SongForm({ setform, item }) {
         },
 
         onSubmit: async () => {
+            if (!valiadte(form.values)) return;
             let formdata = new FormData();
             formdata.append('duration', form.values.duration);
             formdata.append("name", form.values.name);

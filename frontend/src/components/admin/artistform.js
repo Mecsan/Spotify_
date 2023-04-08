@@ -19,6 +19,20 @@ function ArtistForm({ item, setform }) {
     const [image, setimage] = useState(null);
     const [imagefile, setimagefile] = useState(null);
 
+    const validate = (obj) => {
+        if(obj.name==""){
+            toast.error("name is required");
+            return false;
+        }
+        if(obj.logo=="" && image==null)
+        {
+            toast.error("upload photo of artist");
+            return false;
+        }
+
+        return true;
+    }
+
     const addArtist = async (formdata) => {
         let res = await fetch(artist, {
             method: "POST",
@@ -65,7 +79,8 @@ function ArtistForm({ item, setform }) {
             name: item ? item.name : "",
             logo: item ? item.logo : ""
         },
-        onSubmit: async () => {
+        onSubmit: async (value) => {
+            if(!validate(value)) return;
             let formdata = new FormData();
             formdata.append("name", form.values.name);
             formdata.append("image", imagefile);

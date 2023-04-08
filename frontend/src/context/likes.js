@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useReducer } from 'react'
+import React, { createContext, useContext, useEffect, useReducer, useState } from 'react'
 import { like } from '../config/api';
 import { AuthContext } from './auth';
 export const LikeContext = createContext();
@@ -25,6 +25,7 @@ function LikeProvider(props) {
     const [likes, dispatch] = useReducer(myfun, {
         likes: []
     })
+    const [load, setload] = useState(true)
 
     const islike = (id) => {
         if (likes.likes.find(like => like._id == id)) {
@@ -35,6 +36,7 @@ function LikeProvider(props) {
 
     useEffect(() => {
         const getLikeSongs = async () => {
+            setload(true);
             let res = await fetch(like, {
                 headers: {
                     "authorization": "berear " + token
@@ -42,6 +44,7 @@ function LikeProvider(props) {
             })
             let data = await res.json();
             dispatch({ type: "SET_LIKES", data: data })
+            setload(false)
         }
         if (token) {
             getLikeSongs();
@@ -51,7 +54,7 @@ function LikeProvider(props) {
     }, [token])
 
     return (
-        <LikeContext.Provider value={{ likes, dispatch, islike }}>
+        <LikeContext.Provider value={{ likes, dispatch, islike, load }}>
             {props.children}
         </LikeContext.Provider>
     )

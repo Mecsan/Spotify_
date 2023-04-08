@@ -20,7 +20,6 @@ function Playlists() {
         let data = await res.json();
         active({ type: "SET_LIST", data: data.playlists.songs })
         active({ type: "SET_ACTIVE", data: data.playlists.songs[0] })
-
     }
 
     const { token } = useContext(AuthContext);

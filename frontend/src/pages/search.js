@@ -45,18 +45,21 @@ function Search() {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     let query = queryParams.get('search');
+    let temp;
     if (query) {
       setsearch(query);
       setloading(true);
       clearTimeout(id);
 
-      let temp = setTimeout(async () => {
+      temp = setTimeout(async () => {
         await searchData(query);
         setloading(false);
       }, debounceTime);
 
       setid(temp);
     }
+
+    return () => clearTimeout(temp)
   }, [location.search])
 
   const handleChange = async (e) => {
@@ -89,11 +92,8 @@ function Search() {
               <Routes>
                 <Route path='/' element={<All />}
                 />
-
                 <Route path='/songs' element={<Songs />} />
-
                 <Route path='/artists' element={<Artist />} />
-
                 <Route path='/playlists' element={
                   <List />
                 } />

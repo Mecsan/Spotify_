@@ -9,6 +9,7 @@ import { ActiveContext } from '../context/active';
 import { AuthContext } from '../context/auth';
 import PlayListForm from '../components/form';
 import { AiFillAlert, AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { RotatingLines } from 'react-loader-spinner';
 
 function Playlist() {
 
@@ -21,6 +22,7 @@ function Playlist() {
   let travers = useNavigate();
 
   let [isform, openForm] = useState(false);
+  const [load, setload] = useState(true);
   const [hasPermission, setpermission] = useState(false);
 
   const [islike, setlike] = useState(false);
@@ -50,6 +52,7 @@ function Playlist() {
   useEffect(() => {
 
     let fethcPlayListInfo = async () => {
+      setload(true);
       const option = {};
       if (token) {
         option['headers'] = { "authorization": "berear " + token }
@@ -58,6 +61,7 @@ function Playlist() {
       let data = await res.json();
       setpermission(data.permission);
       dispatch({ type: "SET_CURR_PLAYLIST", data: data.playlists })
+      setload(false)
     }
 
     fethcPlayListInfo();
@@ -127,83 +131,95 @@ function Playlist() {
     <div className="right">
       <div className="details">
         {
-          currPlayList ? <>
-
-            <div className={hasPermission ? "playlist_cont pointer" : "playlist_cont"
-            }>
-              <div className="playlist_img" onClick={openForm}>
-                <img src={image + currPlayList.image} />
-              </div>
-              <div className="playlist_info">
-                <span>
-                  playlist
-                </span>
-                <h1 onClick={openForm}>
-                  {currPlayList?.name}
-                </h1>
-                {currPlayList?.desc ? <div className="playlist_desc" onClick={openForm}>
-                  {currPlayList?.desc}
-                </div> : null}
-
-                <div className="playlist_extra">
-                  <span onClick={() => {
-                    if (currPlayList.isAdmin) return;
-                    travers("/user/" + currPlayList.user._id);
-                  }}>{currPlayList?.isAdmin ? "✔ Spotify ✔" : currPlayList?.user?.name}</span>
-                  <span>{currPlayList?.createdAt?.substr(0, 4)}</span>
-                  <span>{currPlayList?.songs?.length} songs</span>
-                  <span> {countTime(currPlayList.songs)}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="play_option">
-              < BsFillPlayCircleFill color='#43b943' size={50} onClick={playPlaylist} />
-              {!isOwn(id) && <div className="like" onClick={likePlaylist}>
-                {
-                  islike ?
-                    <AiFillHeart size={30} color='green' />
-                    : <AiOutlineHeart size={30} />
-                }
-              </div>}
+          load ? <div className="center">
+            <RotatingLines
+              strokeColor="green"
+              strokeWidth="5"
+              animationDuration="0.75"
+              width="45"
+              visible={true}
+            />
+          </div> :
+            <>
               {
-                hasPermission &&
-                <>
-                  <div className="play_">
+                currPlayList ? <>
 
-                    <BsThreeDots size={35} />
-                    <div className="options_">
-                      <div onClick={changeVisible}>
-                        {
-                          currPlayList?.isPrivate ? "Make Public" : "Make Private"
-                        }
+                  <div className={hasPermission ? "playlist_cont pointer" : "playlist_cont"
+                  }>
+                    <div className="playlist_img" onClick={openForm}>
+                      <img src={image + currPlayList.image} />
+                    </div>
+                    <div className="playlist_info">
+                      <span>
+                        playlist
+                      </span>
+                      <h1 onClick={openForm}>
+                        {currPlayList?.name}
+                      </h1>
+                      {currPlayList?.desc ? <div className="playlist_desc" onClick={openForm}>
+                        {currPlayList?.desc}
+                      </div> : null}
+
+                      <div className="playlist_extra">
+                        <span onClick={() => {
+                          if (currPlayList.isAdmin) return;
+                          travers("/user/" + currPlayList.user._id);
+                        }}>{currPlayList?.isAdmin ? "✔ Spotify ✔" : currPlayList?.user?.name}</span>
+                        <span>{currPlayList?.createdAt?.substr(0, 4)}</span>
+                        <span>{currPlayList?.songs?.length} songs</span>
+                        <span> {countTime(currPlayList.songs)}</span>
                       </div>
-                      <div onClick={() => openForm(true)}>Edit playlist</div>
-                      <div onClick={deletePlaylist}>Delele this playlist</div>
                     </div>
                   </div>
-                  <div>{
-                    currPlayList?.isPrivate ? "Private" : "Public"
-                  }
+
+                  <div className="play_option">
+                    < BsFillPlayCircleFill color='#43b943' size={50} onClick={playPlaylist} />
+                    {!isOwn(id) && <div className="like" onClick={likePlaylist}>
+                      {
+                        islike ?
+                          <AiFillHeart size={30} color='green' />
+                          : <AiOutlineHeart size={30} />
+                      }
+                    </div>}
+                    {
+                      hasPermission &&
+                      <>
+                        <div className="play_">
+
+                          <BsThreeDots size={35} />
+                          <div className="options_">
+                            <div onClick={changeVisible}>
+                              {
+                                currPlayList?.isPrivate ? "Make Public" : "Make Private"
+                              }
+                            </div>
+                            <div onClick={() => openForm(true)}>Edit playlist</div>
+                            <div onClick={deletePlaylist}>Delele this playlist</div>
+                          </div>
+                        </div>
+                        <div>{
+                          currPlayList?.isPrivate ? "Private" : "Public"
+                        }
+                        </div>
+                      </>
+                    }
                   </div>
-                </>
+
+                  <SongTable
+                    permission={hasPermission}
+                    removeFrom={removeFrom}
+                    songs={currPlayList.songs}
+                  />
+
+                  {
+                    isform && <PlayListForm setform={openForm} item={currPlayList} extra={update} />
+                  }
+                </> : null
+
+
               }
-            </div>
-
-            <SongTable
-              permission={hasPermission}
-              removeFrom={removeFrom}
-              songs={currPlayList.songs}
-            />
-
-            {
-              isform && <PlayListForm setform={openForm} item={currPlayList} extra={update} />
-            }
-          </> : null
-
-
+            </>
         }
-
       </div>
 
     </div >

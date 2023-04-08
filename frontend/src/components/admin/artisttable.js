@@ -36,13 +36,6 @@ function ArtissTable({ artists, edit }) {
   }
   return (
     <div className="table" >
-
-      <div className="head_row">
-        <span>#</span>
-        <span className='t_name'>artist</span>
-        <span>option</span>
-      </div>
-
       {
         artists.map((artist, id) => {
           return (

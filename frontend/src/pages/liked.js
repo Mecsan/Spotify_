@@ -5,10 +5,11 @@ import { LikeContext } from '../context/likes';
 import { ActiveContext } from '../context/active';
 import toast from 'react-hot-toast';
 import { image } from '../config/api';
+import { RotatingLines } from 'react-loader-spinner';
 
 function Liked() {
 
-  const { likes } = useContext(LikeContext);
+  const { likes, load } = useContext(LikeContext);
   const { dispatch: setactive } = useContext(ActiveContext);
 
   const playPlaylist = () => {
@@ -34,36 +35,49 @@ function Liked() {
       <div className="right">
         <div className="details">
           {
-            likes?.likes && <>
-              <div className="playlist_cont">
-                <div className="playlist_img" >
-                  <img src={image + "1667816796524.png"} />
-                </div>
-                <div className="playlist_info">
-                  <span>
-                    likes
-                  </span>
-                  <h1 >
-                    liked songs
-                  </h1>
-                  <div className="playlist_extra">
-                    <span> {likes?.likes.length} songs</span>
-                    <span>{countTime(likes?.likes)}</span>
-                  </div>
-                </div>
-
-              </div >
-
-              <div className="play_option" style={{ cursor: "pointer" }} onClick={playPlaylist}>
+            load ? <div className="center">
+              <RotatingLines
+                strokeColor="green"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="45"
+                visible={true}
+              />
+            </div> :
+              <>
                 {
+                  likes?.likes && <>
+                    <div className="playlist_cont">
+                      <div className="playlist_img" >
+                        <img src={image + "1667816796524.png"} />
+                      </div>
+                      <div className="playlist_info">
+                        <span>
+                          likes
+                        </span>
+                        <h1 >
+                          liked songs
+                        </h1>
+                        <div className="playlist_extra">
+                          <span> {likes?.likes.length} songs</span>
+                          <span>{countTime(likes?.likes)}</span>
+                        </div>
+                      </div>
 
-                  <BsFillPlayCircleFill color='#43b943' size={50} />
+                    </div >
 
+                    <div className="play_option" style={{ cursor: "pointer" }} onClick={playPlaylist}>
+                      {
+
+                        <BsFillPlayCircleFill color='#43b943' size={50} />
+
+                      }
+                    </div>
+
+                    <SongTable songs={likes.likes} />
+                  </>
                 }
-              </div>
-
-              <SongTable songs={likes.likes} />
-            </>
+              </>
           }
         </div>
       </div>
