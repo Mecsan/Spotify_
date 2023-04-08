@@ -81,7 +81,6 @@ const updateProfile = asyncHandler(async (req, res) => {
         obj['logo'] = req.file.filename
     }
 
-    console.log(req.file,body)
 
     let newUser = await user.findOneAndUpdate({ _id: req.user }, obj, { new: true });
     res.json(newUser);
@@ -106,14 +105,23 @@ const addUser = asyncHandler(async (req, res) => {
         name: name,
         isAdmin: req.body.isAdmin
     })
-
     await newuser.save();
+    newuser = newuser.toObject();
+    delete newuser.password;
     res.json(newuser);
 })
 
 const upadteuser = asyncHandler(async (req, res) => {
     let { id } = req.params;
-    let newUser = await user.findOneAndUpdate({ _id: id }, req.body, { new: true });
+    let body = {}
+    if (req.body.password) {
+        let salt = await bcry.genSalt();
+        let hash = await bcry.hash(req.body.password, salt);
+        req.body.password = hash;
+    } else {
+        delete req.body.password;
+    }
+    let newUser = await user.findOneAndUpdate({ _id: id }, req.body, { new: true }).select("-password");
     res.json(newUser);
 })
 
