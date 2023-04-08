@@ -6,6 +6,7 @@ import ArtistItem from '../components/artistitem';
 import { artist, playlist, song } from '../config/api';
 import { useNavigate } from 'react-router-dom';
 import { RotatingLines } from 'react-loader-spinner';
+import Loading from '../components/loader';
 
 function Home() {
     const [songs, setsongs] = useState(null);
@@ -57,82 +58,70 @@ function Home() {
         <>
             <div className="right">
                 <div className="details">
-                    {
-                        load ? <div className="center">
-                            <RotatingLines
-                                strokeColor="green"
-                                strokeWidth="5"
-                                animationDuration="0.75"
-                                width="45"
-                                visible={true}
-                            />
-                        </div>
-                            :
-                            <>
-
-
-                                {
-                                    playlists ?
-                                        <>
-                                            <div className="home-title">
-                                                <h2>Top playlists</h2>
-                                                <span onClick={() => navigate("/playlists")}>See all</span>
-                                            </div>
-                                            <div className="songs_container">
-                                                <div className="songs">
-                                                    {
-                                                        playlists.map((song, idx) => {
-                                                            return <Playitem key={idx} item={song} />
-                                                        })
-                                                    }
-                                                </div>
-                                            </div>
-                                        </> : null
-                                }
-
-                                {
-                                    songs ? <>
+                    <Loading load={load}>
+                        <>
+                            {
+                                playlists ?
+                                    <>
                                         <div className="home-title">
-                                            <h2>Latest songs</h2>
-                                            <span onClick={() => navigate("/songs")}>See all</span>
+                                            <h2>Top playlists</h2>
+                                            <span onClick={() => navigate("/playlists")}>See all</span>
                                         </div>
                                         <div className="songs_container">
                                             <div className="songs">
                                                 {
-                                                    songs.map((song, idx) => {
-                                                        return (
-                                                            <SongItem key={idx} song={song} songs={songs} />
-                                                        )
+                                                    playlists.map((song, idx) => {
+                                                        return <Playitem key={idx} item={song} />
                                                     })
                                                 }
                                             </div>
                                         </div>
-                                    </> : ""
-                                }
+                                    </> : null
+                            }
 
-                                {artists ?
-                                    <>
-                                        <div className="home-title">
-
-                                            <h2>Popular artists</h2>
-                                            <span onClick={() => navigate("/artists")}>See all</span>
+                            {
+                                songs ? <>
+                                    <div className="home-title">
+                                        <h2>Latest songs</h2>
+                                        <span onClick={() => navigate("/songs")}>See all</span>
+                                    </div>
+                                    <div className="songs_container">
+                                        <div className="songs">
+                                            {
+                                                songs.map((song, idx) => {
+                                                    return (
+                                                        <SongItem key={idx} song={song} songs={songs} />
+                                                    )
+                                                })
+                                            }
                                         </div>
-                                        <div className="artist_con">
+                                    </div>
+                                </> : ""
+                            }
 
-                                            <div className="artists" >
-                                                {
-                                                    artists.map((artist) => {
-                                                        return (
-                                                            <ArtistItem key={artist._id} artist={artist} />
-                                                        )
-                                                    })
-                                                }
-                                            </div>
+                            {artists ?
+                                <>
+                                    <div className="home-title">
+
+                                        <h2>Popular artists</h2>
+                                        <span onClick={() => navigate("/artists")}>See all</span>
+                                    </div>
+                                    <div className="artist_con">
+
+                                        <div className="artists" >
+                                            {
+                                                artists.map((artist) => {
+                                                    return (
+                                                        <ArtistItem key={artist._id} artist={artist} />
+                                                    )
+                                                })
+                                            }
                                         </div>
-                                    </> : ""
-                                }
-                            </>
-                    }
+                                    </div>
+                                </> : ""
+                            }
+                        </>
+                    </Loading>
 
                 </div>
             </div>

@@ -16,40 +16,6 @@ function Nav() {
   const { playlists, dispatch } = useContext(PlaylistContext);
   const { token } = useContext(AuthContext)
 
-  useEffect(() => {
-    const fetchPlaylist = async () => {
-
-      let res = await fetch(playlist, {
-        headers: {
-          "authorization": "berear " + token
-        }
-      });
-      let data = await res.json();
-      return data;
-    }
-
-    const getLikedlist = async () => {
-      let res2 = await fetch(playlist + "like/", {
-        headers: {
-          "authorization": "berear " + token
-        }
-      });
-      let data2 = await res2.json();
-      return data2.map((one) => { return { ...one, like: true } });
-    }
-
-    const makelist = async () => {
-      const results = await Promise.all([fetchPlaylist(), getLikedlist()]);
-      dispatch({ type: "SET_PLAYLISTS", data: [...results[0], ...results[1]] })
-    }
-
-    if (token) {
-      makelist();
-    } else {
-      dispatch({ type: "SET_PLAYLISTS", data: [] })
-    }
-  }, [token])
-
   const addPlaylist = async () => {
     if (token == null) {
       toast.error("Login to continue");

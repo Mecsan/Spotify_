@@ -1,7 +1,14 @@
 import React, { createContext, useReducer } from 'react'
+import { useContext } from 'react';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { playlist as playlistApi } from '../config/api';
+import { AuthContext } from './auth';
 
 export const PlaylistContext = createContext();
 function PlaylistProvider(props) {
+
+    const { token } = useContext(AuthContext)
 
     const myfun = (state, action) => {
         switch (action.type) {
@@ -57,6 +64,8 @@ function PlaylistProvider(props) {
         currPlayList: {}, //when we are on perticular playlist page this indicates current playlist info with songs also   
     })
 
+    const [load, setload] = useState(true)
+
     const isliked = (id) => {
         let res = playlist.playlists.find((one) => {
             if (one._id == id) return true;
@@ -74,8 +83,43 @@ function PlaylistProvider(props) {
         return true;
     }
 
+    const fetchPlaylist = async () => {
+        let res = await fetch(playlistApi, {
+            headers: {
+                "authorization": "berear " + token
+            }
+        });
+        let data = await res.json();
+        return data;
+    }
+
+    const getLikedlist = async () => {
+        let res2 = await fetch(playlistApi + "like/", {
+            headers: {
+                "authorization": "berear " + token
+            }
+        });
+        let data2 = await res2.json();
+        return data2.map((one) => { return { ...one, like: true } });
+    }
+
+    useEffect(() => {
+        const makelist = async () => {
+            setload(true);
+            const results = await Promise.all([fetchPlaylist(), getLikedlist()]);
+            dispatch({ type: "SET_PLAYLISTS", data: [...results[0], ...results[1]] })
+            setload(false)
+        }
+
+        if (token) {
+            makelist();
+        } else {
+            dispatch({ type: "SET_PLAYLISTS", data: [] })
+        }
+    }, [token])
+
     return (
-        <PlaylistContext.Provider value={{ dispatch, ...playlist, isOwn, isliked }}>
+        <PlaylistContext.Provider value={{ dispatch, ...playlist, isOwn, isliked, load }}>
             {props.children}
         </PlaylistContext.Provider>
     )

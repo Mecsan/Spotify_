@@ -2,17 +2,21 @@ import React from 'react'
 import { useState } from 'react';
 import { useEffect } from 'react';
 import ArtistItem from '../components/artistitem';
+import Loading from '../components/loader';
 import { artist } from '../config/api';
 
 function ARtists() {
   const [artists, setartists] = useState(null);
+  const [load, setload] = useState(true)
 
   const fetchArtists = async () => {
+    setload(true)
     let res = await fetch(artist);
     let data = await res.json();
     if (res.ok) {
       setartists(data);
     }
+    setload(false)
   }
 
   useEffect(() => {
@@ -23,23 +27,26 @@ function ARtists() {
   return (
     <div className="right">
       <div className="details">
-        {artists ?
-          <>
-            <h2>Artists</h2>
-            <div className="artist_con full">
+        <Loading load={load}>
+          {artists ?
+            <>
+              <h2>Artists</h2>
+              <div className="artist_con full">
 
-              <div className="artists" >
-                {
-                  artists.map((artist, idx) => {
-                    return (
-                      <ArtistItem key={idx} artist={artist} />
-                    )
-                  })
-                }
+                <div className="artists" >
+                  {
+                    artists.map((artist, idx) => {
+                      return (
+                        <ArtistItem key={idx} artist={artist} />
+                      )
+                    })
+                  }
+                </div>
               </div>
-            </div>
-          </> : null
-        }
+            </> : null
+          }
+        </Loading>
+
       </div>
     </div>
   )

@@ -14,6 +14,7 @@ import SongItem from '../components/songitem';
 import { artist as artistApi } from '../config/api';
 import SongTable from '../components/SongTable';
 import { RotatingLines } from 'react-loader-spinner';
+import Loading from '../components/loader';
 
 function Song() {
 
@@ -21,7 +22,6 @@ function Song() {
     const { dispatch, likes, islike: funIslike } = useContext(LikeContext);
     const { token } = useContext(AuthContext)
     const { dispatch: playSong } = useContext(ActiveContext);
-    const { playlists } = useContext(PlaylistContext);
 
     let [song, setsong] = useState(null);
     const [artist, setartist] = useState(null);
@@ -103,92 +103,82 @@ function Song() {
     return (
         <div className="right">
             <div className="details">
-                {
+                <Loading load={load}>
+                    <>
+                        {
+                            song && <>
 
-                    load ? <div className="center">
-                        <RotatingLines
-                            strokeColor="green"
-                            strokeWidth="5"
-                            animationDuration="0.75"
-                            width="45"
-                            visible={true}
-                        />
-                    </div> :
-                        <>
-
-                            {
-                                song && <>
-
-                                    <div className="playlist_cont">
-                                        <div className="playlist_img">
-                                            <img src={image + song.image} />
-                                        </div>
+                                <div className="playlist_cont">
+                                    <div className="playlist_img">
+                                        <img src={image + song.image} />
+                                    </div>
 
 
-                                        <div className="playlist_info">
-                                            <span>
-                                                song
-                                            </span>
-                                            <h1 >
-                                                {song.name}
-                                            </h1>
+                                    <div className="playlist_info">
+                                        <span>
+                                            song
+                                        </span>
+                                        <h1 >
+                                            {song.name}
+                                        </h1>
 
-                                            <div className="playlist_extra">
-                                                <span onClick={() => {
-                                                    navigate("/artist/" + song.artist._id);
-                                                }}>{song.artist.name}</span>
-                                                <span>{song?.createdAt?.substr(0, 4)}</span>
-                                                <span>{countTime([song])}</span>
-                                            </div>
-                                        </div>
-
-                                    </div >
-
-                                    <div className="play_option">
-
-                                        <div className="play_" onClick={play}>
-                                            <BsFillPlayCircleFill color='#43b943' size={50} />
-                                        </div>
-
-                                        <div className="like" onClick={handleClick}>
-                                            {islike ?
-                                                <AiFillHeart size={30} color='green' /> :
-                                                <AiOutlineHeart size={30} />
-                                            }
+                                        <div className="playlist_extra">
+                                            <span onClick={() => {
+                                                navigate("/artist/" + song.artist._id);
+                                            }}>{song.artist.name}</span>
+                                            <span>{song?.createdAt?.substr(0, 4)}</span>
+                                            <span>{countTime([song])}</span>
                                         </div>
                                     </div>
 
-                                    <SongTable songs={[song]} />
+                                </div >
 
-                                    {
-                                        artist && artist.songs.filter((song, idx) => {
-                                            if (song._id == id) return false;
-                                            if (idx > 4) return false;
-                                            return true;
-                                        }).length ? <>
-                                            <h2>More by {artist.artist.name}</h2>
-                                            <div className="songs_container">
-                                                <div className="songs">
-                                                    {
-                                                        artist.songs.filter((song, idx) => {
-                                                            if (song._id == id) return false;
-                                                            if (idx > 4) return false;
-                                                            return true;
-                                                        }).map((song, idx) => {
-                                                            return (
-                                                                <SongItem key={idx} song={song}
-                                                                    songs={artist.songs} />
-                                                            )
-                                                        })
-                                                    }
-                                                </div>
+                                <div className="play_option">
+
+                                    <div className="play_" onClick={play}>
+                                        <BsFillPlayCircleFill color='#43b943' size={50} />
+                                    </div>
+
+                                    <div className="like" onClick={handleClick}>
+                                        {islike ?
+                                            <AiFillHeart size={30} color='green' /> :
+                                            <AiOutlineHeart size={30} />
+                                        }
+                                    </div>
+                                </div>
+
+                                <SongTable songs={[song]} />
+
+                                {
+                                    artist && artist.songs.filter((song, idx) => {
+                                        if (song._id == id) return false;
+                                        if (idx > 4) return false;
+                                        return true;
+                                    }).length ? <>
+                                        <h2>More by {artist.artist.name}</h2>
+                                        <div className="songs_container">
+                                            <div className="songs">
+                                                {
+                                                    artist.songs.filter((song, idx) => {
+                                                        if (song._id == id) return false;
+                                                        if (idx > 4) return false;
+                                                        return true;
+                                                    }).map((song, idx) => {
+                                                        return (
+                                                            <SongItem key={idx} song={song}
+                                                                songs={artist.songs} />
+                                                        )
+                                                    })
+                                                }
                                             </div>
-                                        </> : null
-                                    }
-                                </>
-                            }
-                        </>
-                }
+                                        </div>
+                                    </> : null
+                                }
+                            </>
+                        }
+                    </>
+                </Loading>
+
             </div>
         </div >
     )

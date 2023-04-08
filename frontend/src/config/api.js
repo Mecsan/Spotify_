@@ -1,6 +1,6 @@
 let baseUrl = "http://localhost:2000/";
 
-baseUrl = "http://192.168.251.184:2000/"
+baseUrl = "http://192.168.84.184:2000/"
 // baseUrl = "/"
 
 export const playlist = baseUrl + "playlist/"
