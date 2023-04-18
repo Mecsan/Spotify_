@@ -26,7 +26,7 @@ const getOnePlayList = asyncHandler(async (req, res) => {
 
     let playlists = await playlist.findOne({ _id: id }).populate({
         path: "songs",
-        select: "name image artist song duration likes",
+        select: "name image artist song duration",
         populate: {
             path: "artist",
             select: "name"
@@ -43,7 +43,9 @@ const getOnePlayList = asyncHandler(async (req, res) => {
     let auth = req.headers['authorization'];
     let token = auth?.split(" ")[1];
 
-    if (playlists?.isAdmin) {
+    // in normal mode even if user is admin he wont have permission
+    // permission only allowed in dashboard
+    if (playlists.isAdmin) {
         resObj['permission'] = false;
         return res.json(resObj);
     }
@@ -90,7 +92,7 @@ const updatePlayList = asyncHandler(async (req, res) => {
 
     let updated = await playlist.findOneAndUpdate({ _id: id }, obj, { new: true }).populate({
         path: "songs",
-        select: "name image artist"
+        select: "name image artist song duration "
     });;
 
     res.json(updated);
@@ -153,7 +155,7 @@ const likePlaylist = asyncHandler(async (req, res) => {
         let newuser = await user.findOneAndUpdate({ _id: req.user }, {
             $push: { likedList: id }
         }, { new: true })
-        res.json({ msg: id,like:true })
+        res.json({ msg: id, like: true })
     }
 })
 
