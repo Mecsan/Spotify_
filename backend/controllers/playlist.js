@@ -98,6 +98,13 @@ const updatePlayList = asyncHandler(async (req, res) => {
     res.json(updated);
 })
 
+const changeVisibility = asyncHandler(async (req, res) => {
+    let { id, action } = req.params;
+    let private = action == "true" ? true : false;
+    let updated = await playlist.findOneAndUpdate({ _id: id }, { isPrivate: private });
+    res.json(private);
+})
+
 const addSongToPlaylist = asyncHandler(async (req, res) => {
 
     // checking for permission that this playlist belongs  current login user 
@@ -124,20 +131,6 @@ const RemoveSongFromPlaylist = asyncHandler(async (req, res) => {
 
     res.json(sid);
 })
-
-
-const makePrivate = asyncHandler(async (req, res) => {
-    let { id } = req.params;
-    let newu = await playlist.findOneAndUpdate({ _id: id }, { isPrivate: true }, { new: true });
-    res.json({ msg: id })
-})
-
-const makePublic = asyncHandler(async (req, res) => {
-    let { id } = req.params;
-    let newu = await playlist.findOneAndUpdate({ _id: id }, { isPrivate: false }, { new: true });
-    res.json({ msg: id })
-})
-
 
 const likePlaylist = asyncHandler(async (req, res) => {
     let { id } = req.params;
@@ -204,10 +197,9 @@ module.exports = {
     addSongToPlaylist,
     RemoveSongFromPlaylist,
     getHomePlaylists,
-    makePrivate,
-    makePublic,
     getadminPlaylists,
     addAdminPlaylist,
     likePlaylist,
-    getlikedList
+    getlikedList,
+    changeVisibility
 }

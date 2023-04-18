@@ -5,8 +5,8 @@ import { LikeContext } from '../context/likes';
 import { ActiveContext } from '../context/active';
 import toast from 'react-hot-toast';
 import { image } from '../config/api';
-import { RotatingLines } from 'react-loader-spinner';
 import Loading from '../components/loader';
+import countTime from '../helper/countTime';
 
 function Liked() {
 
@@ -21,16 +21,7 @@ function Liked() {
       toast.error("No song in liked")
     }
   }
-
-  let countTime = (songs) => {
-    let time = 0;
-    songs?.forEach(like => {
-      time += parseInt(like?.duration)
-    });
-    return (time / 60).toFixed(2)
-  }
-
-
+  
   return (
     <>
       <div className="right">

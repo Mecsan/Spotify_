@@ -13,7 +13,7 @@ import Options from '../options'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 
-function SongTable({ songs, edit = null }) {
+function SongTable({ songs, removeFrom, edit = null }) {
 
   const navigate = useNavigate();
 
@@ -42,7 +42,6 @@ function SongTable({ songs, edit = null }) {
     }
 
   }
-
   const playThis = () => {
 
   }
@@ -94,6 +93,9 @@ function SongTable({ songs, edit = null }) {
                 {
                   isoption == id && playlists?.length ?
                     < div className="options">
+                      {edit == null ? <div onClick={() => {
+                        removeFrom(song._id)
+                      }}>remove from this playlist</div> : null}
                       <div className='addTolist'>
                         add to playlist <BsFillCaretRightFill />
                         <Options

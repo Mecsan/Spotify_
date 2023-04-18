@@ -7,25 +7,19 @@ import { useNavigate, useParams } from 'react-router-dom'
 import PlayListForm from '../../components/form';
 import { AdminContext } from '../../context/admincontent';
 import { PlaylistContext } from '../../context/playlist';
-import { image, playlist } from '../../config/api';
+import { image } from '../../config/api';
 import SongTable from '../../components/admin/songtable';
 import toast from 'react-hot-toast';
-import { AuthContext } from '../../context/auth';
 import { RotatingLines } from 'react-loader-spinner';
+import usePlaylist from '../../hooks/usePlaylist';
+import countTime from '../../helper/countTime';
 
 function Playlist() {
-  let countTime = (songs) => {
-    let time = 0;
-    songs?.forEach(like => {
-      time += parseInt(like?.duration)
-    });
-    return (time / 60).toFixed(2)
-  }
 
   let { id } = useParams();
   const { dispatch: playlistdispathc, currPlayList } = useContext(PlaylistContext);
   const { dispatch } = useContext(AdminContext);
-  const { token } = useContext(AuthContext)
+  const { update, changeVis, delete_, get, removeSong } = usePlaylist();
 
   const [isform, setform] = useState(false);
   const [load, setload] = useState(true);
@@ -33,16 +27,9 @@ function Playlist() {
   const travers = useNavigate();
   let fethcPlayListInfo = async () => {
     setload(true);
-    let res = await fetch(playlist + id);
-    let data = await res.json();
-    if (res.ok) {
-      playlistdispathc({ type: "SET_CURR_PLAYLIST", data: data.playlists });
-    }
+    let data = await get(id);
     setload(false);
-  }
-
-  const update = (data) => {
-    dispatch({ type: "UPDATE_PLAYLIST", data: data });
+    playlistdispathc({ type: "SET_CURR_PLAYLIST", data: data.playlists });
   }
 
   useEffect(() => {
@@ -50,26 +37,40 @@ function Playlist() {
   }, [id])
 
   const changeVisible = async () => {
-    let res = await fetch(playlist + (currPlayList.isPrivate ? "public/" : "private/") + id, {
-      headers: {
-        'authorization': "berear " + token
-      }
-    });
-    let data = await res.json();
-    playlistdispathc({ type: 'SET_PRIVATE', data: currPlayList.isPrivate ? false : true });
+    let data = await changeVis(id, currPlayList.isPrivate ? "false" : "true");
+    playlistdispathc({ type: 'SET_PRIVATE', data });
     toast.success(`${currPlayList.name} is now ${currPlayList.isPrivate ? "Public" : "Private"}`)
+  }
+
+  const updatePlaylist = async (form) => {
+    const tid = toast.loading("updating task", {
+      duration: 100000
+    });
+    const data = await update(currPlayList._id, form);
+    if (data.success == false) {
+      toast.error(data.msg, { id: tid, duration: 3000 });
+    } else {
+      toast.success("updated successfully", { id: tid, duration: 3000 });
+      setform(false);
+      playlistdispathc({ type: "SET_CURR_PLAYLIST", data });
+      dispatch({ type: "UPDATE_PLAYLIST", data: data })
+    }
   }
 
   const deletePlaylist = async () => {
     let tid = toast.loading("deleting...")
-    let res = await fetch(playlist + id, {
-      method: "DELETE",
-      headers: { "authorization": "berear " + token }
-    })
-    let data = await res.json();
+    let data = await delete_(id)
     toast.success("Delted successfully", { id: tid })
     dispatch({ type: "DELETE_PlAYLIST", data: data.msg });
     travers('/dashboard/playlists');
+  }
+  const removeFrom = async (key) => {
+    let tid = toast.loading("removing song ...")
+    const res = await removeSong(id, key);
+    if (res.ok) {
+      playlistdispathc({ type: "REMOVE_SONG", data: key })
+      toast.success("Removed successfully", { id: tid });
+    }
   }
 
   return (
@@ -120,7 +121,7 @@ function Playlist() {
                       isform && <PlayListForm
                         setform={setform}
                         item={currPlayList}
-                        extra={update} />
+                        update={updatePlaylist} />
                     }
 
                     <div className="play_option">
@@ -146,7 +147,7 @@ function Playlist() {
                       </>
                     </div>
 
-                    {currPlayList.songs ? <SongTable songs={currPlayList.songs} /> : null}
+                    {currPlayList.songs ? <SongTable removeFrom={removeFrom} songs={currPlayList.songs} /> : null}
 
                   </> : null
 

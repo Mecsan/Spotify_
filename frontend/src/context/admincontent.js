@@ -113,7 +113,7 @@ function AdminProvider({ children }) {
         artists: [],
         playlists: []
     })
-    
+
     let fetchSongs = async () => {
         let res = await fetch(song);
         let data = await res.json();
@@ -156,7 +156,7 @@ function AdminProvider({ children }) {
         fetchArtist();
         fetchAdminPlaylists();
     }, [])
-    
+
     return (
         <AdminContext.Provider value={{ ...admin, dispatch }}>
             {children}

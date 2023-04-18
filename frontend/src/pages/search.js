@@ -9,6 +9,7 @@ import { createContext } from 'react';
 import Songs from '../components/search/songs';
 import List from '../components/search/list';
 import Artist from '../components/search/artists';
+import Loading from '../components/loader';
 export let searchContext = createContext();
 
 function Search() {
@@ -17,16 +18,17 @@ function Search() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  let [loading, setloading] = useState(true);
+  let [loading, setloading] = useState(false);
   let [lists, setlists] = useState([]);
   let [songs, setsongs] = useState([]);
   let [artists, setartists] = useState([]);
   let [id, setid] = useState();
   let debounceTime = 1500;
 
-
   const searchData = async (val) => {
-    //console.log("searching")
+    if (!val) return;
+    // console.log("searching for "+val)
+    val = val.trim();
 
     let res = await fetch(searchapi + `?q=${val}`);
     let data = await res.json();
@@ -36,42 +38,36 @@ function Search() {
     setlists(data.playLists);
   }
 
-  const reset = () => {
-    setartists([]);
-    setlists([]);
-    setsongs([]);
+  const searchAd = async (search) => {
+    clearTimeout(id);
+    setloading(true);
+
+    let temp = setTimeout(async () => {
+      await searchData(search);
+      setloading(false);
+    }, debounceTime);
+
+    setid(temp);
   }
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     let query = queryParams.get('search');
-    let temp;
     if (query) {
       setsearch(query);
       setloading(true);
-      clearTimeout(id);
-
-      temp = setTimeout(async () => {
-        await searchData(query);
-        setloading(false);
-      }, debounceTime);
-
-      setid(temp);
+      searchData(query).then(() => setloading(false))
     }
-
-    return () => clearTimeout(temp)
-  }, [location.search])
+  }, [])
 
   const handleChange = async (e) => {
-
     let val = e.target.value;
     setsearch(val);
+    searchAd(val);
     val = val.trim();
-
     navigate("?search=" + val);
-    if (val == "") {
-      reset();
-      return;
+    if(val==""){
+      setloading(false);      
     }
   }
 
@@ -86,20 +82,22 @@ function Search() {
 
         <Nav />
 
-        {
-          search.trim() ?
-            <searchContext.Provider value={{ loading, lists, songs, artists }}>
-              <Routes>
-                <Route path='/' element={<All />}
-                />
-                <Route path='/songs' element={<Songs />} />
-                <Route path='/artists' element={<Artist />} />
-                <Route path='/playlists' element={
-                  <List />
-                } />
-              </Routes>
-            </searchContext.Provider> : "Search anything you want"
-        }
+        <Loading load={loading}>
+          {
+            search?.trim() ?
+              <searchContext.Provider value={{ loading, lists, songs, artists }}>
+                <Routes>
+                  <Route path='/' element={<All />}
+                  />
+                  <Route path='/songs' element={<Songs />} />
+                  <Route path='/artists' element={<Artist />} />
+                  <Route path='/playlists' element={
+                    <List />
+                  } />
+                </Routes>
+              </searchContext.Provider> : "Search anything you want"
+          }
+        </Loading>
 
       </div>
     </div>

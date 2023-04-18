@@ -9,13 +9,12 @@ const {
     getOnePlayList,
     addSongToPlaylist,
     RemoveSongFromPlaylist,
-    makePrivate,
-    makePublic,
     getadminPlaylists,
     addAdminPlaylist,
     getHomePlaylists,
     likePlaylist,
-    getlikedList
+    getlikedList,
+    changeVisibility
 } = require("../controllers/playlist");
 
 const authenticate = require('../middleware/authmiddleware');
@@ -30,12 +29,13 @@ Router.get("/home", getHomePlaylists);
 Router.get("/admin", authenticate, isadmin, getadminPlaylists);
 Router.post("/admin", authenticate, isadmin, addAdminPlaylist)
 
-Router.get("/public/:id", authenticate, makePublic);
-Router.get("/private/:id", authenticate, makePrivate);
 
 Router.get("/like/:id", authenticate, validateId, likePlaylist);
 Router.get("/like", authenticate, getlikedList);
 Router.get("/:id", validateId, getOnePlayList);
+
+
+Router.get("/:id/:action", authenticate, validateId, isOwner, changeVisibility)
 
 Router.put("/:id", authenticate, validateId, isOwner, upload.single('image'), updatePlayList);
 

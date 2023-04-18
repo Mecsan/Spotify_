@@ -13,8 +13,8 @@ import toast from 'react-hot-toast';
 import SongItem from '../components/songitem';
 import { artist as artistApi } from '../config/api';
 import SongTable from '../components/SongTable';
-import { RotatingLines } from 'react-loader-spinner';
 import Loading from '../components/loader';
+import countTime from '../helper/countTime';
 
 function Song() {
 
@@ -55,16 +55,6 @@ function Song() {
         }
     }, [song])
 
-    useEffect(() => {
-        if (token && likes.likes) {
-            if (funIslike(id)) {
-                setlike(true);
-            } else {
-                setlike(false);
-            }
-        }
-    }, [likes])
-
     const handleClick = async () => {
         if (token == null) {
             toast.error("Login to continue..")
@@ -91,13 +81,6 @@ function Song() {
     const play = () => {
         playSong({ type: "SET_ACTIVE", data: song });
         playSong({ type: "SET_LIST", data: artist.songs })
-    }
-    let countTime = (songs) => {
-        let time = 0;
-        songs?.forEach(like => {
-            time += parseInt(like?.duration)
-        });
-        return (time / 60).toFixed(2)
     }
 
     return (
@@ -140,7 +123,7 @@ function Song() {
                                     </div>
 
                                     <div className="like" onClick={handleClick}>
-                                        {islike ?
+                                        {funIslike(id) ?
                                             <AiFillHeart size={30} color='green' /> :
                                             <AiOutlineHeart size={30} />
                                         }

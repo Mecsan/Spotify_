@@ -36,53 +36,60 @@ function App() {
           <Routes>
             <Route element={
               <>
-                <Nav />
-                <BottomNav />
-                <Header />
                 <Player />
                 <Outlet />
               </>
             }>
-              <Route path="/" element={<Home />} />
 
-              <Route path="/liked" element={
-                <AuthProtected>
-                  <Liked />
-                </AuthProtected>}
-              />
+              <Route element={
+                <>
+                  <Nav />
+                  <BottomNav />
+                  <Header />
+                  <Outlet />
+                </>
+              }>
+                <Route path="/" element={<Home />} />
 
-              <Route path="/library" element={
-                <AuthProtected>
-                  <Library />
-                </AuthProtected>}
-              />
+                <Route path="/liked" element={
+                  <AuthProtected>
+                    <Liked />
+                  </AuthProtected>}
+                />
 
-              <Route path='/profile' element={
-                <AuthProtected>
-                  <Profile />
-                </AuthProtected>
+                <Route path="/library" element={
+                  <AuthProtected>
+                    <Library />
+                  </AuthProtected>}
+                />
+
+                <Route path='/profile' element={
+                  <AuthProtected>
+                    <Profile />
+                  </AuthProtected>
+                } />
+
+                <Route path="/search/*" element={<Search />} />
+
+                <Route path='/playlist/:id' element={<Playlist />} />
+                <Route path='/song/:id' element={<Song />} />
+                <Route path='/artist/:id' element={<Artist />} />
+                <Route path='/user/:id' element={<User />} />
+
+                <Route path='/playing' element={<Queue />} />
+                <Route path='/songs' element={<Songs />} />
+                <Route path="/playlists" element={<Playlists />} />
+                <Route path="/artists" element={<ARtists />} />
+
+              </Route>
+
+              <Route path='/dashboard/*' element={
+                <AdminProteced>
+                  <DashBoard />
+                </AdminProteced>
               } />
-
-              <Route path="/search/*" element={<Search />} />
-
-              <Route path='/playlist/:id' element={<Playlist />} />
-              <Route path='/song/:id' element={<Song />} />
-              <Route path='/artist/:id' element={<Artist />} />
-              <Route path='/user/:id' element={<User />} />
-
-              <Route path='/playing' element={<Queue />} />
-              <Route path='/songs' element={<Songs />} />
-              <Route path="/playlists" element={<Playlists />} />
-              <Route path="/artists" element={<ARtists />} />
-
             </Route>
 
-            <Route path='/dashboard/*' element={
-              <AdminProteced>
-                <Player />
-                <DashBoard />
-              </AdminProteced>
-            } />
 
             <Route path='/signin' element={<Singin />} />
             <Route path='/signup' element={<Signup />} />

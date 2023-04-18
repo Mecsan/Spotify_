@@ -1,14 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast';
 import { MdOutlineClose } from 'react-icons/md'
 import { RiImageEditLine } from 'react-icons/ri'
-import { image as imgapi, playlist } from '../config/api';
-import { PlaylistContext } from '../context/playlist';
+import { image as imgapi } from '../config/api';
 
-function PlayListForm({ setform, item, extra = () => { } }) {
-
-  let { dispatch } = useContext(PlaylistContext)
-
+function PlayListForm({ setform, item, update }) {
   let [name, setname] = useState("");
   let [desc, setdesc] = useState("");
 
@@ -28,37 +24,20 @@ function PlayListForm({ setform, item, extra = () => { } }) {
     setimage(src);
   }
 
-  const updatePlaylist = async () => {
-    if(name==""){
+  const handleSubmit = () => {
+    if (name == "") {
       toast.error("invalid name")
       return;
     }
 
-    const tid = toast.loading("updating task", {
-      duration: 100000
-    });
     let form = new FormData();
     form.append('name', name);
     form.append("desc", desc);
     form.append("image", file);
 
-    let res = await fetch(playlist + item._id, {
-      method: "PUT",
-      headers: {
-        "authorization": "berear " + localStorage.getItem('spoti')
-      },
-      body: form
-    });
-    let data = await res.json();
-    if (data.success == false) {
-      toast.error(data.msg, { id: tid,duration:3000 });
-    } else {
-      toast.success("updated successfully", { id: tid ,duration:3000});
-      setform(false);
-      dispatch({ type: "SET_CURR_PLAYLIST", data });
-      extra(data);
-    }
+    update(form);
   }
+
 
   return (
     <div className="overlay" onClick={(e) => {
@@ -95,7 +74,7 @@ function PlayListForm({ setform, item, extra = () => { } }) {
           </div>
         </div>
 
-        <div className="submit" onClick={updatePlaylist}>Update </div>
+        <div className="submit" onClick={handleSubmit}>Update </div>
       </div>
     </div>
   )

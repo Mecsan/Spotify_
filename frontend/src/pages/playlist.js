@@ -9,20 +9,21 @@ import { ActiveContext } from '../context/active';
 import { AuthContext } from '../context/auth';
 import PlayListForm from '../components/form';
 import { AiFillAlert, AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import { RotatingLines } from 'react-loader-spinner';
 import Loading from '../components/loader';
-
+import usePlaylist from '../hooks/usePlaylist';
+import countTime from '../helper/countTime';
 function Playlist() {
 
   let { dispatch, currPlayList, isOwn, isliked: checkLike, playlists } = useContext(PlaylistContext)
 
   let { token } = useContext(AuthContext);
-  let { dispatch: setactive } = useContext(ActiveContext)
+  let { dispatch: setactive } = useContext(ActiveContext);
+  let { update, delete_, get, removeSong, changeVis } = usePlaylist();
 
   let { id } = useParams();
   let travers = useNavigate();
 
-  let [isform, openForm] = useState(false);
+  let [isform, setForm] = useState(false);
   const [load, setload] = useState(true);
   const [hasPermission, setpermission] = useState(false);
 
@@ -33,33 +34,19 @@ function Playlist() {
   }, [playlists, id])
 
   const removeFrom = async (key) => {
-    let res = await fetch(playlist + "/songs/" + id + "/" + key, {
-      method: "DELETE",
-      headers: {
-        "authorization": "berear " + token
-      }
-    })
-    let data = await res.json();
+    let tid = toast.loading("removing song ...")
+    const res = await removeSong(id, key);
     if (res.ok) {
       dispatch({ type: "REMOVE_SONG", data: key })
-      toast.success("Removed successfully");
+      toast.success("Removed successfully", { id: tid });
     }
-  }
-
-  const update = (data) => {
-    dispatch({ type: "UPDATE_PLAYLIST", data: data })
   }
 
   useEffect(() => {
 
     let fethcPlayListInfo = async () => {
       setload(true);
-      const option = {};
-      if (token) {
-        option['headers'] = { "authorization": "berear " + token }
-      }
-      let res = await fetch(playlist + id, option)
-      let data = await res.json();
+      const data = await get(id);
       setpermission(data.permission);
       dispatch({ type: "SET_CURR_PLAYLIST", data: data.playlists })
       setload(false)
@@ -79,24 +66,14 @@ function Playlist() {
   }
 
   const changeVisible = async () => {
-
-    let res = await fetch(some + (currPlayList.isPrivate ? "public/" : "private/") + id, {
-      headers: {
-        "authorization": "berear " + token
-      }
-    });
-    let data = await res.json();
-    dispatch({ type: 'SET_PRIVATE', data: currPlayList.isPrivate ? false : true });
+    let data = await changeVis(id, currPlayList.isPrivate ? "false" : "true");
+    dispatch({ type: 'SET_PRIVATE', data});
     toast.success(`${currPlayList.name} is now ${currPlayList.isPrivate ? "Public" : "Private"}`)
   }
 
   const deletePlaylist = async () => {
     let tid = toast.loading("deleting...")
-    let res = await fetch(some + id, {
-      method: "DELETE",
-      headers: { "authorization": "berear " + token }
-    })
-    let data = await res.json();
+    const data = await delete_(id);
     toast.success("Delted successfully", { id: tid })
     dispatch({ type: "DELETE_PLAYLIST", data: data.msg })
     travers('/');
@@ -121,13 +98,28 @@ function Playlist() {
 
   }
 
-  let countTime = (songs) => {
-    let time = 0;
-    songs?.forEach(like => {
-      time += parseInt(like?.duration)
-    });
-    return (time / 60).toFixed(2)
+
+  const openForm = () => {
+    if (hasPermission) {
+      setForm(true);
+    }
   }
+
+  const updatePlaylist = async (form) => {
+    const tid = toast.loading("updating task", {
+      duration: 100000
+    });
+    const data = await update(currPlayList._id, form);
+    if (data.success == false) {
+      toast.error(data.msg, { id: tid, duration: 3000 });
+    } else {
+      toast.success("updated successfully", { id: tid, duration: 3000 });
+      setForm(false);
+      dispatch({ type: "SET_CURR_PLAYLIST", data });
+      dispatch({ type: "UPDATE_PLAYLIST", data: data })
+    }
+  }
+
   return (
     <div className="right">
       <div className="details">
@@ -184,7 +176,7 @@ function Playlist() {
                               currPlayList?.isPrivate ? "Make Public" : "Make Private"
                             }
                           </div>
-                          <div onClick={() => openForm(true)}>Edit playlist</div>
+                          <div onClick={openForm}>Edit playlist</div>
                           <div onClick={deletePlaylist}>Delele this playlist</div>
                         </div>
                       </div>
@@ -203,7 +195,10 @@ function Playlist() {
                 />
 
                 {
-                  isform && <PlayListForm setform={openForm} item={currPlayList} extra={update} />
+                  isform && <PlayListForm
+                    setform={setForm}
+                    item={currPlayList}
+                    update={updatePlaylist} />
                 }
               </> : null
             }
