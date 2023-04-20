@@ -10,7 +10,7 @@ import { AuthContext } from '../context/auth';
 import PlayListForm from '../components/form';
 import { AiFillAlert, AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import Loading from '../components/loader';
-import usePlaylist from '../hooks/usePlaylist';
+import usePlaylist from '../common/usePlaylist';
 import countTime from '../helper/countTime';
 function Playlist() {
 

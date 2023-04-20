@@ -11,7 +11,7 @@ import { image } from '../../config/api';
 import SongTable from '../../components/admin/songtable';
 import toast from 'react-hot-toast';
 import { RotatingLines } from 'react-loader-spinner';
-import usePlaylist from '../../hooks/usePlaylist';
+import usePlaylist from '../../common/usePlaylist';
 import countTime from '../../helper/countTime';
 
 function Playlist() {

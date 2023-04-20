@@ -10,6 +10,7 @@ import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { image } from '../config/api';
+import countTime from '../helper/countTime';
 
 function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission }) {
     const { dispatch, likes, islike: funIslike } = useContext(LikeContext);
@@ -120,9 +121,9 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
                     }
                 </div>
                 <div>{
-                    isNaN(song.duration / 60) ? 0 : (song.duration / 60).toFixed(2)
+                    countTime([song])
                 }</div>
-                
+
                 <div className="playlist_option" >
                     <BsThreeDots onClick={(e) => {
                         setoption(id)

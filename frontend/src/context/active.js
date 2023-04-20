@@ -8,7 +8,7 @@ function ActiveProvider(props) {
         switch (action.type) {
             case "SET_ACTIVE": return {
                 ...state,
-                item: action.data,
+                idx: action.data,
             }
             case "SET_LIST": return {
                 ...state,
@@ -22,8 +22,8 @@ function ActiveProvider(props) {
                 return state;
         }
     }, {
-        item: JSON.parse(localStorage.getItem('activeItem')),
-        list: JSON.parse(localStorage.getItem('activeList')) || []//songs of a playlist for next & pre button
+        idx: JSON.parse(localStorage.getItem('activeidx')) || -1,
+        list: JSON.parse(localStorage.getItem('activeList')) || [] // list of songs
     })
 
     useEffect(() => {
@@ -32,9 +32,9 @@ function ActiveProvider(props) {
     }, [active.list])
 
     useEffect(() => {
-        let item = JSON.stringify(active.item);
-        localStorage.setItem('activeItem', item);
-    }, [active.item])
+        let item = JSON.stringify(active.idx);
+        localStorage.setItem('activeidx', item);
+    }, [active.idx])
 
     const isQueued = (key) => {
         if (active.list.length == 0) return true;

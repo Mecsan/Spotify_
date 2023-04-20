@@ -19,13 +19,13 @@ const songRoute = require("./routes/song");
 const playlistRoute = require("./routes/playlist");
 const artistRoute = require("./routes/artist");
 
-app.use("/user", authRoute);
-app.use("/song", songRoute);
-app.use("/artist", artistRoute);
-app.use("/playlist", playlistRoute);
+app.use("/api/user", authRoute);
+app.use("/api/song", songRoute);
+app.use("/api/artist", artistRoute);
+app.use("/api/playlist", playlistRoute);
 
-app.get("/search", searchAll);
-app.get("/image/:name", getImage);
+app.get("/api/search", searchAll);
+app.get("/api/image/:name", getImage);
 
 if (process.env.NODE_ENV == "production") {
     app.use(express.static(__dirname + "/frontend/build"))

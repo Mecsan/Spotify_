@@ -3,7 +3,10 @@ let countTime = (songs) => {
     songs?.forEach(song => {
         time += parseInt(song?.duration)
     });
-    return (time / 60).toFixed(2)
+    const min = Math.floor(time / 60);
+    let sec = time % 60;
+    sec = sec.toString().padStart(2,'0')
+    return `${min}:${sec}`
 }
 
 export default countTime
