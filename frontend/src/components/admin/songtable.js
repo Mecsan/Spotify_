@@ -1,5 +1,4 @@
 import React from 'react'
-import { BiTimeFive } from 'react-icons/bi'
 import { MdDeleteOutline } from 'react-icons/md'
 import { FaUserEdit } from 'react-icons/fa'
 import { image, song } from '../../config/api'
@@ -10,7 +9,8 @@ import toast from 'react-hot-toast'
 import { useState } from 'react'
 import { BsThreeDots, BsFillCaretRightFill } from 'react-icons/bs'
 import Options from '../options'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { ActiveContext } from '../../context/active'
 
 
 function SongTable({ songs, removeFrom, edit = null }) {
@@ -19,7 +19,7 @@ function SongTable({ songs, removeFrom, edit = null }) {
 
   const { playlists, dispatch } = useContext(AdminContext);
   const { token } = useContext(AuthContext)
-
+  const { dispatch: setactive } = useContext(ActiveContext)
   const [isoption, setoption] = useState(-1);
 
   const { id: pid } = useParams();
@@ -42,28 +42,25 @@ function SongTable({ songs, removeFrom, edit = null }) {
     }
 
   }
-  const playThis = () => {
-
+  const playThis = (id) => {
+    setactive({ type: "SET_ACTIVE", id });
+    setactive({ type: "SET_LIST", songs });
   }
   return (
     <div className="table" >
-
-
       {
         songs.map((song, id) => {
           return (
             <div key={id} className="song_row" onMouseLeave={() => setoption(-1)}>
               <span>{id + 1}</span>
-              <div className='small_song t_name' onClick={playThis}>
+              <div className='small_song t_name' onClick={() => playThis(id)}>
                 <img src={image + song?.image} />
                 <span>
                   {song.name}
                   <div className="small_artist">{song.artist.name}</div>
                 </span>
               </div>
-              <div className='t_artist' onClick={() => {
-                navigate("/artist/" + song.artist._id)
-              }}>
+              <div className='t_artist'>
                 <span>
                   {song.artist.name}
                 </span>

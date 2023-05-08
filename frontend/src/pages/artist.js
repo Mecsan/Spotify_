@@ -34,7 +34,7 @@ function Artist() {
             return;
         }
         dispatch({ type: "SET_LIST", data: artist.songs })
-        dispatch({ type: "SET_ACTIVE", data: artist.songs[0] })
+        dispatch({ type: "SET_ACTIVE", data: 0 })
     }
 
     return (

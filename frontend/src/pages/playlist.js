@@ -62,7 +62,7 @@ function Playlist() {
       return;
     }
     setactive({ type: "SET_LIST", data: currPlayList.songs });
-    setactive({ type: "SET_ACTIVE", data: currPlayList.songs[0] });
+    setactive({ type: "SET_ACTIVE", data: 0 });
   }
 
   const changeVisible = async () => {

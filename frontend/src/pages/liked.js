@@ -16,7 +16,7 @@ function Liked() {
   const playPlaylist = () => {
     if (likes.likes.length) {
       setactive({ type: "SET_LIST", data: likes.likes });
-      setactive({ type: "SET_ACTIVE", data: likes.likes[0] })
+      setactive({ type: "SET_ACTIVE", data: 0 })
     } else {
       toast.error("No song in liked")
     }

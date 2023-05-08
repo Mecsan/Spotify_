@@ -5,7 +5,7 @@ import { image } from '../config/api';
 import { ActiveContext } from '../context/active';
 import { BsFillPlayCircleFill } from 'react-icons/bs'
 
-function SongItem({ songs, song }) {
+function SongItem({ songs, song, idx }) {
 
     const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ function SongItem({ songs, song }) {
             <img src={image + song?.image} alt="" />
             <div className="name">{song?.name}</div>
             <div className="play_hidden" onClick={(e) => {
-                dispatch({ type: "SET_ACTIVE", data: song });
+                dispatch({ type: "SET_ACTIVE", data: idx });
                 dispatch({ type: "SET_LIST", data: songs })
                 e.stopPropagation();
             }}>

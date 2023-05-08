@@ -2,6 +2,9 @@ import React, { createContext, useReducer } from 'react'
 import { useEffect } from 'react';
 
 export const ActiveContext = createContext();
+const lid = localStorage.getItem('activeidx');
+const llist = localStorage.getItem('activeList');
+
 function ActiveProvider(props) {
 
     let [active, dispatch] = useReducer((state, action) => {
@@ -22,8 +25,8 @@ function ActiveProvider(props) {
                 return state;
         }
     }, {
-        idx: JSON.parse(localStorage.getItem('activeidx')) || -1,
-        list: JSON.parse(localStorage.getItem('activeList')) || [] // list of songs
+        idx: lid ? JSON.parse(lid) : -1,
+        list: llist ? JSON.parse(llist) : [] // list of songs
     })
 
     useEffect(() => {

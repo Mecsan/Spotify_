@@ -126,7 +126,7 @@ function Player() {
         if (idx > -1) {
             fetchSongData();
         }
-    }, [idx])
+    }, [idx,list])
 
     useEffect(() => {
         if (token && likes.likes && idx > -1) {

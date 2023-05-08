@@ -71,7 +71,9 @@ function Home() {
                                             <div className="songs">
                                                 {
                                                     playlists.map((song, idx) => {
-                                                        return <Playitem key={idx} item={song} />
+                                                        return <Playitem
+                                                            key={idx}
+                                                            item={song} />
                                                     })
                                                 }
                                             </div>
@@ -90,7 +92,7 @@ function Home() {
                                             {
                                                 songs.map((song, idx) => {
                                                     return (
-                                                        <SongItem key={idx} song={song} songs={songs} />
+                                                        <SongItem key={idx} idx={idx} song={song} songs={songs} />
                                                     )
                                                 })
                                             }

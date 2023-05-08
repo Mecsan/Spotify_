@@ -47,7 +47,7 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
     }
 
     const playThis = () => {
-        setactive({ type: "SET_ACTIVE", data: song });
+        setactive({ type: "SET_ACTIVE", data: id - 1 });
         setactive({ type: "SET_LIST", data: songs });
     }
     useEffect(() => {

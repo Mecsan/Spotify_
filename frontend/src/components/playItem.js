@@ -17,7 +17,7 @@ function Playitem({ item }) {
             return;
         }
         dispatch({ type: "SET_LIST", data: data.playlists.songs })
-        dispatch({ type: "SET_ACTIVE", data: data.playlists.songs[0] })
+        dispatch({ type: "SET_ACTIVE", data: 0 })
     }
 
     const navigate = useNavigate();

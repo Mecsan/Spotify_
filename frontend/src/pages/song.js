@@ -46,6 +46,9 @@ function Song() {
     const fetchArtis = async (id) => {
         let res = await fetch(artistApi + id);
         let data = await res.json();
+        // move current song to 0th idx
+        let temp = data?.songs?.filter(one => one._id != song._id)
+        data.songs = [song,...temp];
         setartist(data);
     }
 
@@ -79,7 +82,7 @@ function Song() {
     }
 
     const play = () => {
-        playSong({ type: "SET_ACTIVE", data: song });
+        playSong({ type: "SET_ACTIVE", data: 0 });
         playSong({ type: "SET_LIST", data: artist.songs })
     }
 
