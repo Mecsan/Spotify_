@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path")
 const cors = require('cors');
 const app = express();
 
@@ -28,10 +29,11 @@ app.get("/api/search", searchAll);
 app.get("/api/image/:name", getImage);
 
 if (process.env.NODE_ENV == "production") {
-    app.use(express.static(__dirname + "./../frontend/build"))
+    const staticPath  = path.resolve(__dirname,"..","frontend","build");
+    app.use(express.static(staticPath))
 
     app.use("*", (req, res) => {
-        res.sendFile(__dirname + "./../frontend/build/index.html");
+        res.sendFile(staticPath+"/index.html");
     })
 }
 
