@@ -7,8 +7,6 @@ const { playlist } = require('../models/playlist');
 
 const signup = asyncHandler(async (req, res) => {
 
-    // validate body before entering in db
-
     let { email, password, name } = req.body;
 
     let exist = await user.findOne({ mail: email });
@@ -39,7 +37,6 @@ const signup = asyncHandler(async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
 
-    // validate body before searching in db
     let { email, password } = req.body;
 
     let find = await user.findOne({ mail: email });

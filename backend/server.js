@@ -28,10 +28,10 @@ app.get("/api/search", searchAll);
 app.get("/api/image/:name", getImage);
 
 if (process.env.NODE_ENV == "production") {
-    app.use(express.static(__dirname + "/frontend/build"))
+    app.use(express.static(__dirname + "./../frontend/build"))
 
     app.use("*", (req, res) => {
-        res.sendFile(__dirname + "/frontend/build/index.html");
+        res.sendFile(__dirname + "./../frontend/build/index.html");
     })
 }
 

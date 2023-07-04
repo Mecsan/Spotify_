@@ -1,7 +1,10 @@
-let baseUrl = "http://localhost:2000/api/";
+let baseUrl = "";
 
-// baseUrl = "http://192.168.60.184:2000/api/"
-// baseUrl = "/"
+if (process.env.NODE_ENV == 'development') {
+    baseUrl = "http://localhost:2000/api/";
+} else {
+    baseUrl = "/api/";
+}
 
 export const playlist = baseUrl + "playlist/"
 
