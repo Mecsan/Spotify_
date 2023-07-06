@@ -4,17 +4,6 @@ const asyncHandler = require("express-async-handler");
 const Myerror = require("../helper/customErr");
 
 const { connection, mongo } = require("mongoose");
-var gfs, gridBucket;
-// to read gridfs files from database 
-const gridFs = require("gridfs-stream");
-
-
-connection.once('open', () => {
-    gfs = gridFs(connection, mongo);
-    gridBucket = new mongo.GridFSBucket(connection, {
-        bucketName: 'images'
-    })
-})
 
 const getsongs = asyncHandler(async (req, res) => {
 
@@ -41,23 +30,21 @@ const getSongData = asyncHandler(async (req, res) => {
 
     // song stream api which will directly get audio data from gridfs
     let { name } = req.params;
-    gfs.collection("songs");
-    let song = await gfs.files.findOne({ filename: name });
-    if (!song) throw new Myerror("no song found with name", 400);
+    let songBucket = new mongo.GridFSBucket(connection, {
+        bucketName: 'songs'
+    })
+    let cursor = songBucket.find({ filename: name }).toArray();
+    let song = await cursor;
+    song = song[0];
 
+    if (!song) throw new Myerror("no song found with name", 404);
 
     let fileSize = song.length
 
     let chunkSize = 500000// 500kb 
 
-    gridBucket = new mongo.GridFSBucket(connection, {
-        bucketName: 'songs'
-    })
-
     let range = req.headers.range;
     let start = 0, end;
-
-
 
     if (range) {
         arr = range.substring(6).split("-");
@@ -67,8 +54,7 @@ const getSongData = asyncHandler(async (req, res) => {
     end = Math.min(start + chunkSize, fileSize - 1);
 
     if (start != end) {
-
-        const readstream = gridBucket.openDownloadStream(song._id, { start: start, end: end });
+        const readstream = songBucket.openDownloadStreamByName(name, { start: start, end: end });
         res.writeHead(206, {
             'Accept-Ranges': 'bytes',
             'Content-Range': 'bytes ' + start + '-' + end + '/' + fileSize,
@@ -76,17 +62,19 @@ const getSongData = asyncHandler(async (req, res) => {
             'Content-Type': 'audio/mpeg',
         });
 
+    
         readstream.pipe(res);
-    }else{
+
+        readstream.on("error", (e) => {
+            console.log(e);
+            res.send(e);
+        })
+    } else {
         res.end();
     }
 })
 
 const addsong = asyncHandler(async (req, res) => {
-
-    // validate the input 
-
-    // validate for already exist song name
 
     let body = JSON.parse(JSON.stringify(req.body));
 
@@ -131,7 +119,6 @@ const updatedsong = asyncHandler(async (req, res) => {
         obj['image'] = req.files['photo'][0].filename
     }
 
-    // validate req.body
     let newSong = await song.findOneAndUpdate({ _id: id }, obj, { new: true }).populate({
         path: "artist",
         name: "logo name"
