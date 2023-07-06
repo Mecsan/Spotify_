@@ -68,14 +68,11 @@ const getOnePlayList = asyncHandler(async (req, res) => {
 const dltPlayList = asyncHandler(async (req, res) => {
 
     let { id } = req.params;
-    // checking for permission that this playlist belongs  current login user 
     let deleted = await playlist.deleteOne({ _id: id });
     res.json({ msg: id })
 })
 
 const updatePlayList = asyncHandler(async (req, res) => {
-
-    // checking for permission that this playlist belongs  current login user 
 
     let { id } = req.params;
 
@@ -93,7 +90,9 @@ const updatePlayList = asyncHandler(async (req, res) => {
     let updated = await playlist.findOneAndUpdate({ _id: id }, obj, { new: true }).populate({
         path: "songs",
         select: "name image artist song duration "
-    });;
+    }).populate({
+        path:"user"
+    })
 
     res.json(updated);
 })
@@ -106,8 +105,6 @@ const changeVisibility = asyncHandler(async (req, res) => {
 })
 
 const addSongToPlaylist = asyncHandler(async (req, res) => {
-
-    // checking for permission that this playlist belongs  current login user 
 
     let { id, sid } = req.params;
 
@@ -153,15 +150,13 @@ const likePlaylist = asyncHandler(async (req, res) => {
 })
 
 const getlikedList = asyncHandler(async (req, res) => {
-    let users = await user.findOne({ _id: req.user });
-    let likedIds = users.likedList;
-    let lists = await playlist.find({
-        _id: {
-            $in: likedIds
-        }
-    })
+    let users = await user.findOne({ _id: req.user }).populate({
+        path:"likedList"
+    });
+    let lists = users.likedList;
     res.json(lists);
 })
+
 const getHomePlaylists = asyncHandler(async (req, res) => {
     const limit = req.query.limit
     let playlists = await playlist.find({ isAdmin: true, isPrivate: false }).sort("-createdAt").limit(

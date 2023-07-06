@@ -62,7 +62,7 @@ const getSongData = asyncHandler(async (req, res) => {
             'Content-Type': 'audio/mpeg',
         });
 
-    
+
         readstream.pipe(res);
 
         readstream.on("error", (e) => {
@@ -144,16 +144,15 @@ const toggleLike = asyncHandler(async (req, res) => {
 })
 
 const getLikedsongs = asyncHandler(async (req, res) => {
-    let users = await user.findOne({ _id: req.user });
-    let likedIds = users.liked;
-    let songs = await song.find({
-        _id: {
-            $in: likedIds
+    let users = await user.findOne({ _id: req.user }).populate({
+        path: "liked",
+        populate: {
+            path: "artist",
+            select: "name"
         }
-    }).populate({
-        path: "artist",
-        select: "name"
-    })
+    });
+
+    let songs = users.liked;
     res.json(songs);
 })
 
