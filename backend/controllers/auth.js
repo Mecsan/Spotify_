@@ -125,6 +125,7 @@ const upadteuser = asyncHandler(async (req, res) => {
 const deletUser = asyncHandler(async (req, res) => {
     let { id } = req.params;
     await user.deleteOne({ _id: id });
+    await playlist.deleteMany({ user: id });
     res.json({ msg: id });
 })
 
