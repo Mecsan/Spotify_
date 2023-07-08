@@ -25,7 +25,7 @@ function LikeProvider(props) {
     const [likes, dispatch] = useReducer(myfun, {
         likes: []
     })
-    const [load, setload] = useState(true)
+    const [load, setload] = useState(false)
 
     const islike = (id) => {
         if (likes.likes.find(like => like._id == id)) {

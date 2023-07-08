@@ -9,7 +9,7 @@ import UserTable from '../../components/admin/usertable'
 
 function Users() {
 
-  const { users, dispatch } = useContext(AdminContext);
+  const { users } = useContext(AdminContext);
   const [isform, setform] = useState(false);
   const [active, setactive] = useState(null);
 

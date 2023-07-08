@@ -7,16 +7,12 @@ import { MdSkipNext, MdQueueMusic, MdPauseCircleFilled } from 'react-icons/md'
 import { Oval } from 'react-loader-spinner'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 
-function MobilePlayer({ item, LikeSong, isliked, isplay, toggleplay, audio, audioRef, setaudio, isload, handleNext, handlePre }) {
+function MobilePlayer({ item, LikeSong, isliked, isplay, toggleplay, audio, audioRef, setaudio, isload, handleNext, handlePre, getTime }) {
 
     const [isbig, setbig] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
-    const variants = {
-        open: { opacity: 1, y: "0%" },
-        closed: { opacity: 0, y: "100%" },
-    }
     return (
         < >
             <div className="small-player" onClick={() => setbig(true)}>
@@ -99,11 +95,11 @@ function MobilePlayer({ item, LikeSong, isliked, isplay, toggleplay, audio, audi
                         <div className="big-track">
                             <span className="current_time">
                                 {
-                                    isNaN(audio.currTime * audioRef?.current?.duration / 6000) ? 0 : (audio.currTime * audioRef?.current?.duration / 6000).toFixed(2)}
+                                    getTime(audioRef.current ? audioRef.current.currentTime : 0)}
                             </span>
                             <span className="total_time">
                                 {
-                                    isNaN(audioRef?.current?.duration / 60) ? 0 : (audioRef?.current?.duration / 60).toFixed(2)
+                                    getTime(audioRef.current ? audioRef.current.duration : 0)
                                 }
                             </span>
 

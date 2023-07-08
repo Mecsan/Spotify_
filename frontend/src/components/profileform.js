@@ -38,7 +38,6 @@ function ProfileForm({ close, item }) {
             body: form
         });
         let data = await res.json();
-        console.log(data)
         if (data.success == false) {
             toast.error(data.msg, { id: tid, duration: 3000 });
         } else {

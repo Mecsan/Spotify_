@@ -21,7 +21,7 @@ function Header() {
         </div>
       </div>
       <div className="min-logo" onClick={() => navigate("/")}>
-        <img src='./assests/logo.png' />
+        <img src='/assests/logo.png' />
       </div>
       <div className="ins">
         {

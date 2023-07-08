@@ -14,7 +14,7 @@ import countTime from '../helper/countTime';
 
 function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission }) {
     const { dispatch, likes, islike: funIslike } = useContext(LikeContext);
-    const { dispatch: setactive, item, isQueued } = useContext(ActiveContext);
+    const { dispatch: setactive, idx, isQueued, list } = useContext(ActiveContext);
     const { playlists } = useContext(PlaylistContext);
     const { token } = useContext(AuthContext)
     let [islike, setlike] = useState(false);
@@ -79,7 +79,7 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
 
     return (
         <>
-            <div className={song._id == item?._id ? "song_row playing" : "song_row"}
+            <div className={song._id == list[idx]?._id ? "song_row playing" : "song_row"}
                 onMouseLeave={() => setoption(-1)}
             >
                 <span>{id}</span>
@@ -130,31 +130,39 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
                     }
                     } />
                     {
-                        isoption == id && playlists?.length ?
-                            < div className="options">
-                                {
-                                    permission &&
-                                    <div onClick={() => {
-                                        removeFrom(song._id)
-                                    }}>remove from this playlist</div>
-                                }
-                                {
-                                    !isQueued(song._id) &&
-                                    <div className="add-to-queue" onClick={addToQueue}>
-                                        add to queue
-                                    </div>
-                                }
-                                <div className='addTolist'>
-                                    add to playlist <BsFillCaretRightFill />
-                                    <Options
-                                        playlists={playlists}
-                                        id={song._id}
-                                        setoption={setoption}
-                                        cuurentPid={pid}
-                                    />
+                        isoption == id &&
+                        <div className="options">
+
+                            {
+
+                                playlists?.length ?
+                                    < div >
+                                        {
+                                            permission &&
+                                            <div onClick={() => {
+                                                removeFrom(song._id)
+                                            }}>remove from this playlist</div>
+                                        }
+                                        <div className='addTolist'>
+                                            add to playlist <BsFillCaretRightFill />
+                                            <Options
+                                                playlists={playlists.filter(one => !one.like)}
+                                                id={song._id}
+                                                setoption={setoption}
+                                                cuurentPid={pid}
+                                            />
+                                        </div>
+                                    </div> : null
+                            }
+
+                            {
+                                !isQueued(song._id) &&
+                                <div className="add-to-queue" onClick={addToQueue}>
+                                    add to queue
                                 </div>
-                            </div>
-                            : ""
+                            }
+
+                        </div>
                     }
                 </div>
             </div>

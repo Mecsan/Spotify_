@@ -58,10 +58,6 @@ function Player() {
         }
     }
 
-    const getTime = () => {
-
-    }
-
     const LikeSong = async (e) => {
         e.stopPropagation();
         if (token == null) {
@@ -94,10 +90,13 @@ function Player() {
     }
 
     let fetchSongData = async () => {
-        setplay(false);
-        audioRef.current.pause();
 
         let url = song + "songdata/" + list[idx].song;
+        if(audioRef.current.src == url) return ;
+        
+        setplay(false);
+        audioRef.current.pause();
+ 
         audioRef.current.src = url;
         setaudio({
             ...audio,
@@ -126,7 +125,16 @@ function Player() {
         if (idx > -1) {
             fetchSongData();
         }
-    }, [idx,list])
+    }, [idx, list])
+
+    const getTime = (time) => {
+        let min = Math.floor(time / 60);
+        min = isNaN(min)?0:min;
+        let sec = time % 60;
+        sec = sec.toFixed(0).toString().padStart(2, '0');
+        sec = isNaN(sec)?0:sec;
+        return `${min}:${sec}`
+    }
 
     useEffect(() => {
         if (token && likes.likes && idx > -1) {
@@ -138,7 +146,7 @@ function Player() {
         } else {
             setlike(false);
         }
-    }, [idx, likes, token])
+    }, [idx, list, likes, token])
 
 
     return (
@@ -207,12 +215,12 @@ function Player() {
                             <div className="track">
                                 <span className="current_time">
                                     {
-                                        isNaN(audio.currTime * audioRef?.current?.duration / 6000) ? 0 : (audio.currTime * audioRef?.current?.duration / 6000).toFixed(2)}
+                                        getTime(audioRef.current ? audioRef.current.currentTime : 0)}
                                 </span>
 
                                 <span className="total_time">
                                     {
-                                        isNaN(audioRef?.current?.duration / 60) ? 0 : (audioRef?.current?.duration / 60).toFixed(2)
+                                        getTime(audioRef.current ? audioRef.current.duration :0)
                                     }
                                 </span>
 
@@ -237,6 +245,7 @@ function Player() {
                     </div>
 
                     <MobilePlayer
+                        getTime={getTime}
                         item={list[idx]}
                         LikeSong={LikeSong}
                         isliked={isliked}

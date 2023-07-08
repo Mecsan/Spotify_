@@ -22,7 +22,6 @@ function Search() {
   let [lists, setlists] = useState([]);
   let [songs, setsongs] = useState([]);
   let [artists, setartists] = useState([]);
-  let [id, setid] = useState();
   let debounceTime = 1500;
 
   const searchData = async (val) => {
@@ -38,38 +37,39 @@ function Search() {
     setlists(data.playLists);
   }
 
-  const searchAd = async (search) => {
-    clearTimeout(id);
-    setloading(true);
-
-    let temp = setTimeout(async () => {
-      await searchData(search);
-      setloading(false);
-    }, debounceTime);
-
-    setid(temp);
+  const handleChange = async (e) => {
+    setsearch(e.target.value);
+    navigate("?search=" + e.target.value);
   }
+
+  const setEmpty = ()=>{
+    setartists([]);
+    setlists([]);
+    setsongs([]);
+  }
+
+  useEffect(() => {
+    if (search) {
+
+      setloading(true);
+      let some = setTimeout(() => {
+        searchData(search).then(() => setloading(false));
+      }, debounceTime);
+
+      return () => clearTimeout(some);
+    } else {
+      setloading(false);
+      setEmpty();
+    }
+  }, [search])
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     let query = queryParams.get('search');
     if (query) {
       setsearch(query);
-      setloading(true);
-      searchData(query).then(() => setloading(false))
     }
   }, [])
-
-  const handleChange = async (e) => {
-    let val = e.target.value;
-    setsearch(val);
-    searchAd(val);
-    val = val.trim();
-    navigate("?search=" + val);
-    if(val==""){
-      setloading(false);      
-    }
-  }
 
   return (
     <div className="right">

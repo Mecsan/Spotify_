@@ -1,5 +1,5 @@
 
-import { Route, BrowserRouter as Router, Routes, Outlet } from 'react-router-dom'
+import { Route, BrowserRouter as Router, Routes, Outlet, Navigate } from 'react-router-dom'
 import Home from "./pages/home";
 import Liked from "./pages/liked";
 import Search from "./pages/search";
@@ -37,6 +37,7 @@ function App() {
             <Route element={
               <>
                 <Player />
+                <Header />
                 <Outlet />
               </>
             }>
@@ -45,7 +46,6 @@ function App() {
                 <>
                   <Nav />
                   <BottomNav />
-                  <Header />
                   <Outlet />
                 </>
               }>
@@ -94,7 +94,7 @@ function App() {
             <Route path='/signin' element={<Singin />} />
             <Route path='/signup' element={<Signup />} />
 
-            <Route path='*' element={<><div>redirecting to home page / login page</div></>} />
+            <Route path='*' element={<><Navigate to="/"/></>} />
           </Routes>
         </Router>
       </div>

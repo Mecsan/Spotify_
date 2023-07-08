@@ -1,6 +1,5 @@
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import Header from '../components/Header'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import AdminProvider from '../context/admincontent'
 import Artists from './admin/artists'
 import BottomNav from '../components/admin/bottomnav'
@@ -14,7 +13,6 @@ function DashBoard() {
     return (
         <AdminProvider>
             <DashNav />
-            <Header />
             <BottomNav />
             <Routes>
                 <Route path='/' element={<DashHome />} />
@@ -23,6 +21,7 @@ function DashBoard() {
                 <Route path='/artists' element={<Artists />} />
                 <Route path='/playlists' element={<Playlists />} />
                 <Route path='/playlist/:id' element={<Playlist />} />
+                <Route path='*' element={<><Navigate to="/" /></>} />
             </Routes>
         </AdminProvider>
     )

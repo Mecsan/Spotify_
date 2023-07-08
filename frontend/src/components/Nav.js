@@ -41,7 +41,7 @@ function Nav() {
     <div className="left">
       <div className="nav">
         <div className="logo" onClick={() => navigate("/")}>
-          <img src={process.env.PUBLIC_URL + "/assests/logo.png"} />
+          <img src="/assests/logo.png" />
         </div>
         <div className="links">
           <div className="link">

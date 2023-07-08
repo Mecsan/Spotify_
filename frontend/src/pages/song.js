@@ -19,7 +19,7 @@ import countTime from '../helper/countTime';
 function Song() {
 
     let { id } = useParams();
-    const { dispatch, likes, islike: funIslike } = useContext(LikeContext);
+    const { dispatch, islike: funIslike } = useContext(LikeContext);
     const { token } = useContext(AuthContext)
     const { dispatch: playSong } = useContext(ActiveContext);
 

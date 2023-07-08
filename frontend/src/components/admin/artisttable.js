@@ -13,10 +13,6 @@ function ArtissTable({ artists, edit }) {
   const { token } = useContext(AuthContext);
   const { dispatch } = useContext(AdminContext);
 
-  const playThis = () => {
-
-  }
-
   const deleteArtist = async (key) => {
     let ans = window.confirm("are u sure wanted to delete?");
     if (ans == false) return;
@@ -44,7 +40,7 @@ function ArtissTable({ artists, edit }) {
           return (
             <div className="song_row">
               <span>{id + 1}</span>
-              <div className='small_song t_name' onClick={playThis}>
+              <div className='small_song t_name'>
                 <img src={image + artist.logo} />
                 <span>
                   {artist.name}

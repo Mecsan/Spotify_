@@ -5,13 +5,12 @@ import { RiImageEditLine } from 'react-icons/ri'
 import { artist, image as imageapi, song } from '../../config/api';
 import { useRef } from 'react';
 import { FaCloudUploadAlt } from 'react-icons/fa'
-import { useEffect } from 'react';
 import { useContext } from 'react';
 import { AdminContext } from '../../context/admincontent';
 import Select from 'react-select';
 import { AuthContext } from '../../context/auth';
 import toast from 'react-hot-toast'
-import { Oval, TailSpin } from 'react-loader-spinner';
+import { Oval } from 'react-loader-spinner';
 import Loader from './loader';
 
 function SongForm({ setform, item }) {
@@ -38,10 +37,10 @@ function SongForm({ setform, item }) {
         setsongfile(e.target.files[0]);
         let src = URL.createObjectURL(e.target.files[0]);
         let forTime = new Audio(src);
-        setTimeout(() => {
+        forTime.onloadedmetadata = ()=>{
             let dura = Math.floor(forTime.duration);
             form.setFieldValue('duration', dura);
-        }, 100);
+        }
     }
 
     const valiadte = (obj) => {
@@ -136,10 +135,6 @@ function SongForm({ setform, item }) {
         }
 
     })
-
-    const mystyle = {
-
-    }
     return (
         <>
             <div className="overlay" onClick={(e) => {
@@ -233,7 +228,7 @@ function SongForm({ setform, item }) {
                                 strokeWidthSecondary={8}
                             />
                             :
-                            <input type='submit' value={item == null ? "Add user" : "Update user"} onClick={() => form.submitForm()} className="submit" />
+                            <input type='submit' value={item == null ? "Add song" : "Update user"} onClick={() => form.submitForm()} className="submit" />
                     }
 
 

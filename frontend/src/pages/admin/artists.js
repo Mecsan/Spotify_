@@ -11,7 +11,7 @@ import ArtistForm from '../../components/admin/artistform';
 
 function Artists() {
 
-  const { artists, dispatch } = useContext(AdminContext);
+  const { artists } = useContext(AdminContext);
 
   const [form, setform] = useState(false);
   const [active, setactive] = useState(null);

@@ -4,6 +4,7 @@ import { FaUserFriends } from 'react-icons/fa'
 import { MdDashboard } from 'react-icons/md'
 import { BsMusicNoteBeamed } from 'react-icons/bs'
 import { MdPerson } from 'react-icons/md'
+import { BiLibrary } from 'react-icons/bi'
 
 function DashNav() {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ function DashNav() {
             <div className="dash-nav">
 
                 <div className="logo" onClick={() => navigate("/")}>
-                    <img src='./assests/logo.png' />
+                    <img src='/assests/logo.png' />
                 </div>
 
                 <div className="dash-links">
@@ -36,7 +37,8 @@ function DashNav() {
                     </div>
 
                     <div className={location.pathname == "/dashboard/playlists" ? "dash-link active" : "dash-link"}>
-                        <MdPerson color='white' />
+                        <BiLibrary
+                            color='white' />
                         <Link to="playlists" >Playlists</Link>
                     </div>
                 </div>

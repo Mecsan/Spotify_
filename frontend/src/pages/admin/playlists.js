@@ -8,6 +8,7 @@ import { ActiveContext } from '../../context/active'
 import { AdminContext } from '../../context/admincontent'
 import { AuthContext } from '../../context/auth'
 import { BsFillPlayCircleFill } from 'react-icons/bs'
+import toast from 'react-hot-toast'
 
 function Playlists() {
 
@@ -18,8 +19,13 @@ function Playlists() {
     const fetchSongs = async (item) => {
         let res = await fetch(playlist + item._id);
         let data = await res.json();
-        active({ type: "SET_LIST", data: data.playlists.songs })
-        active({ type: "SET_ACTIVE", data: data.playlists.songs[0] })
+        if (data?.playlists?.songs?.length) {
+
+            active({ type: "SET_LIST", data: data.playlists.songs })
+            active({ type: "SET_ACTIVE", data: 0 })
+        } else {
+            toast.error("no songs in playlist");
+        }
     }
 
     const { token } = useContext(AuthContext);
@@ -35,7 +41,9 @@ function Playlists() {
 
         let data = await res.json();
         if (res.ok) {
-            dispatch({ type: "ADD_PlAYLIST", data })
+            dispatch({ type: "ADD_PlAYLIST", data });
+            toast.success("playlist added");
+            navigate("/dashboard/playlist/" + data._id)
         }
     }
     return (
