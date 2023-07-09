@@ -4,6 +4,7 @@ const asyncHandler = require("express-async-handler");
 const Myerror = require("../helper/customErr");
 
 const { connection, mongo } = require("mongoose");
+const { playlist } = require("../models/playlist");
 
 const getsongs = asyncHandler(async (req, res) => {
 
@@ -98,6 +99,13 @@ const addsong = asyncHandler(async (req, res) => {
 const dltsong = asyncHandler(async (req, res) => {
     let { id } = req.params;
     let deleted = await song.findOneAndDelete({ _id: id });
+    let dltFromPlaylist = await playlist.updateMany({ "songs": id }, {
+        $pull: { "songs": id }
+    })
+
+    let dltFromLiked = await user.updateMany({ "liked": id }, {
+        $pull: { "liked": id }
+    })
     res.json({ msg: id });
 })
 

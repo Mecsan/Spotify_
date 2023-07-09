@@ -69,6 +69,12 @@ const dltPlayList = asyncHandler(async (req, res) => {
 
     let { id } = req.params;
     let deleted = await playlist.deleteOne({ _id: id });
+    let deleteFromLiked = await user.updateMany({
+        "likedList": id
+    }, {
+        $pull: { "likedList": id }
+    })
+    
     res.json({ msg: id })
 })
 
@@ -91,7 +97,7 @@ const updatePlayList = asyncHandler(async (req, res) => {
         path: "songs",
         select: "name image artist song duration "
     }).populate({
-        path:"user"
+        path: "user"
     })
 
     res.json(updated);
@@ -151,7 +157,7 @@ const likePlaylist = asyncHandler(async (req, res) => {
 
 const getlikedList = asyncHandler(async (req, res) => {
     let users = await user.findOne({ _id: req.user }).populate({
-        path:"likedList"
+        path: "likedList"
     });
     let lists = users.likedList;
     res.json(lists);

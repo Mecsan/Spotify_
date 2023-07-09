@@ -135,8 +135,8 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
 
                             {
 
-                                playlists?.length ?
-                                    < div >
+                                playlists?.filter(one => !one.like)?.length ?
+                                    <>
                                         {
                                             permission &&
                                             <div onClick={() => {
@@ -152,7 +152,7 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
                                                 cuurentPid={pid}
                                             />
                                         </div>
-                                    </div> : null
+                                    </> : null
                             }
 
                             {
