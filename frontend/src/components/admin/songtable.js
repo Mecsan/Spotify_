@@ -15,8 +15,6 @@ import { ActiveContext } from '../../context/active'
 
 function SongTable({ songs, removeFrom, edit = null }) {
 
-  const navigate = useNavigate();
-
   const { playlists, dispatch } = useContext(AdminContext);
   const { token } = useContext(AuthContext)
   const { dispatch: setactive } = useContext(ActiveContext)

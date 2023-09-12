@@ -171,23 +171,7 @@ const getHomePlaylists = asyncHandler(async (req, res) => {
     res.json(playlists);
 })
 
-const getadminPlaylists = asyncHandler(async (req, res) => {
-    const playlistss = await playlist.find({ isAdmin: true }).sort("-createdAt");
-    res.json(playlistss);
-})
-
-
-const addAdminPlaylist = asyncHandler(async (req, res) => {
-    let length = await playlist.countDocuments({ isAdmin: true });
-    let play = new playlist({
-        name: "playlist #" + (length + 1),
-        user: req.user,
-        image: "1667666762403.jpeg",
-        isAdmin: true,
-    })
-    await play.save();
-    res.json(play);
-})
+ 
 
 module.exports = {
     addPlayList,
@@ -198,8 +182,6 @@ module.exports = {
     addSongToPlaylist,
     RemoveSongFromPlaylist,
     getHomePlaylists,
-    getadminPlaylists,
-    addAdminPlaylist,
     likePlaylist,
     getlikedList,
     changeVisibility

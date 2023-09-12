@@ -9,8 +9,6 @@ const {
     getOnePlayList,
     addSongToPlaylist,
     RemoveSongFromPlaylist,
-    getadminPlaylists,
-    addAdminPlaylist,
     getHomePlaylists,
     likePlaylist,
     getlikedList,
@@ -18,7 +16,6 @@ const {
 } = require("../controllers/playlist");
 
 const authenticate = require('../middleware/authmiddleware');
-const isadmin = require('../middleware/isadmin');
 const isOwner = require('../middleware/isOwnerPlaylist');
 const validateId = require('../middleware/valiadteId');
 
@@ -26,9 +23,6 @@ Router.get("/", authenticate, getPlayLists);
 Router.post("/", authenticate, addPlayList);
 
 Router.get("/home", getHomePlaylists);
-Router.get("/admin", authenticate, isadmin, getadminPlaylists);
-Router.post("/admin", authenticate, isadmin, addAdminPlaylist)
-
 
 Router.get("/like/:id", authenticate, validateId, likePlaylist);
 Router.get("/like", authenticate, getlikedList);

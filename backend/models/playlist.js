@@ -26,10 +26,6 @@ const playlistScema = new mongo.Schema({
         type: [mongo.Schema.Types.ObjectId],
         ref: "songs",
         default: []
-    },
-    isAdmin: {
-        type: Boolean,
-        default: false
     }
 }, {
     timestamps: true
