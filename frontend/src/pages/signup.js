@@ -2,14 +2,14 @@ import React from 'react'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { signup } from '../config/api';
 import { useContext } from 'react';
 import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
+import { signup } from '../services/auth';
 
 function Signup() {
 
-  const {token,dispatch } = useContext(AuthContext);
+  const { token, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
   let schema = yup.object().shape({
@@ -27,16 +27,14 @@ function Signup() {
     validationSchema: schema,
     onSubmit: async () => {
       let tid = toast.loading("signing up...")
+      const body = {
+        name: form.values.name,
+        email: form.values.email,
+        password: form.values.password
+      }
 
-      let res = await fetch(signup, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({ name: form.values.name, email: form.values.email, password: form.values.password })
-      })
+      const { res, data } = await signup(body);
 
-      let data = await res.json();
       if (!res.ok) {
         let err = JSON.parse(data.msg);
         form.setFieldError(err.field, err.msg);

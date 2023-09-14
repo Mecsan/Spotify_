@@ -4,13 +4,13 @@ import { BsThreeDots, BsFillCaretRightFill } from 'react-icons/bs'
 import Options from './options';
 import { LikeContext } from '../context/likes';
 import { ActiveContext } from '../context/active';
-import { likeSong } from '../util/likesong'
 import { PlaylistContext } from '../context/playlist';
 import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import { image } from '../config/api';
 import countTime from '../helper/countTime';
+import { likeSong } from '../services/song';
 
 function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission }) {
     const { dispatch, likes, islike: funIslike } = useContext(LikeContext);
@@ -34,7 +34,7 @@ function Songrow({ songs, id, song, removeFrom, isoption, setoption, permission 
         } else {
             tid = toast.loading("adding");
         }
-        await likeSong(song, token);
+        await likeSong(song._id, token);
         if (islike) {
             dispatch({ type: "RM_LIKE", data: song._id })
             toast("Removed from liked", { id: tid })

@@ -2,24 +2,20 @@ import React, { useContext } from 'react'
 import Playitem from '../components/playItem';
 import { PlaylistContext } from '../context/playlist';
 import { HiViewGridAdd } from 'react-icons/hi'
-import { playlist } from '../config/api';
 import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
 import Loading from '../components/loader';
+import { add } from '../services/playlist';
 
 function Library() {
     let { playlists, dispatch, load } = useContext(PlaylistContext);
 
     const { token } = useContext(AuthContext)
     const addPlaylist = async () => {
-        let res = await fetch(playlist,
-            {
-                method: "POST",
-                headers: {
-                    "authorization": "berear " + token
-                }
-            })
-        let data = await res.json();
+        const body = {
+            name: "playlist " + (playlists.length + 1)
+        }
+        let { res, data } = await add(token, JSON.stringify(body));
         dispatch({ type: "ADD_PLAYLIST", data: data })
         toast.success("Playlist added");
         // can be navigate to newly created playlist

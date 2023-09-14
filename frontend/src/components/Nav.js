@@ -8,7 +8,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { PlaylistContext } from '../context/playlist'
 import toast from 'react-hot-toast'
 import { AuthContext } from '../context/auth'
-import { playlist } from '../config/api'
+import { add } from '../services/playlist'
 function Nav() {
 
   let location = useLocation();
@@ -21,14 +21,10 @@ function Nav() {
       toast.error("Login to continue");
       return;
     }
-    let res = await fetch(playlist,
-      {
-        method: "POST",
-        headers: {
-          "authorization": "berear " + token
-        }
-      })
-    let data = await res.json();
+    const body = {
+      name: "playlist " + (playlists.length + 1)
+    }
+    let { data } = await add(token, JSON.stringify(body));
     dispatch({ type: "ADD_PLAYLIST", data: data })
     toast.success("Playlist added");
   }

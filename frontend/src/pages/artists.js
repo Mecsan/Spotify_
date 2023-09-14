@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import ArtistItem from '../components/artistitem';
 import Loading from '../components/loader';
-import { artist } from '../config/api';
+import { getArtists } from '../services/artist';
 
 function ARtists() {
   const [artists, setartists] = useState(null);
@@ -11,8 +11,7 @@ function ARtists() {
 
   const fetchArtists = async () => {
     setload(true)
-    let res = await fetch(artist);
-    let data = await res.json();
+    let { res, data } = await getArtists();
     if (res.ok) {
       setartists(data);
     }

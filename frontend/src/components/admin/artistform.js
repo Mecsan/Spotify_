@@ -9,6 +9,7 @@ import { RiImageEditLine } from 'react-icons/ri'
 import { artist, image as imageapi } from '../../config/api';
 import { AdminContext } from '../../context/admincontent';
 import { AuthContext } from '../../context/auth';
+import { add, update } from '../../services/artist';
 import Loader from './loader';
 
 
@@ -36,20 +37,12 @@ function ArtistForm({ item, setform }) {
 
     const addArtist = async (formdata) => {
         setload(true)
-        let res = await fetch(artist, {
-            method: "POST",
-            headers: {
-                "authorization": "berear " + token,
-            },
-            body: formdata
-        })
-
+        let { res, data } = await add(token, formdata);
         if (!res.ok) {
             setload(false)
             toast.error("something went wrong");
             return;
         }
-        let data = await res.json();
         dispatch({ type: "ADD_ARTIST", data });
         setform(false);
         setload(false)
@@ -57,22 +50,13 @@ function ArtistForm({ item, setform }) {
     }
 
     const updateArtist = async (formdata) => {
-        setload(true)
-
-        let res = await fetch(artist + item._id, {
-            method: "PUT",
-            headers: {
-                "authorization": "berear " + token,
-            },
-            body: formdata
-        })
+        setload(true);
+        let { res, data } = await update(item._id, token, formdata);
         if (!res.ok) {
             setload(false)
             toast.error("something went wrong");
             return;
         }
-
-        let data = await res.json();
         dispatch({ type: "UPDATE_ARTIST", data });
         setform(false);
         setload(false)

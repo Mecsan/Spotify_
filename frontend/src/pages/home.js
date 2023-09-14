@@ -3,10 +3,12 @@ import Playitem from '../components/playItem'
 import { useEffect, useState } from 'react';
 import SongItem from '../components/songitem';
 import ArtistItem from '../components/artistitem';
-import { artist, playlist, song } from '../config/api';
+import { artist, song } from '../config/api';
 import { useNavigate } from 'react-router-dom';
-import { RotatingLines } from 'react-loader-spinner';
 import Loading from '../components/loader';
+import { getAll as getAllPlaylist } from '../services/playlist';
+import { getSongs } from '../services/song';
+import { getArtists } from '../services/artist';
 
 function Home() {
     const [songs, setsongs] = useState(null);
@@ -21,24 +23,21 @@ function Home() {
     let artistlimit = 3;
 
     const fetchSongs = async () => {
-        let res = await fetch(song + "?limit=" + songLimit);
-        let data = await res.json();
+        let { res, data } = await getSongs(songLimit);
         if (res.ok) {
             setsongs(data);
         }
     }
 
     const fetchArtists = async () => {
-        let res = await fetch(artist + "?limit=" + artistlimit);
-        let data = await res.json();
+        let { res, data } = await getArtists(artistlimit);
         if (res.ok) {
             setartists(data);
         }
     }
 
     const fetchPlaylists = async () => {
-        let res = await fetch(playlist + "home?limit=" + playlistlimit);
-        let data = await res.json();
+        let { res, data } = await getAllPlaylist(playlistlimit);
         if (res.ok) {
             setplaylists(data);
         }

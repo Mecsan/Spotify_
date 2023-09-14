@@ -12,6 +12,7 @@ import { AuthContext } from '../../context/auth';
 import toast from 'react-hot-toast'
 import { Oval } from 'react-loader-spinner';
 import Loader from './loader';
+import { add, update } from '../../services/song';
 
 function SongForm({ setform, item }) {
 
@@ -37,7 +38,7 @@ function SongForm({ setform, item }) {
         setsongfile(e.target.files[0]);
         let src = URL.createObjectURL(e.target.files[0]);
         let forTime = new Audio(src);
-        forTime.onloadedmetadata = ()=>{
+        forTime.onloadedmetadata = () => {
             let dura = Math.floor(forTime.duration);
             form.setFieldValue('duration', dura);
         }
@@ -65,20 +66,12 @@ function SongForm({ setform, item }) {
 
     const addSong = async (formdata) => {
         setload(true)
-        let res = await fetch(song, {
-            method: "POST",
-            headers: {
-                "authorization": "berear " + token,
-            },
-            body: formdata
-        })
-
+        let { res, data } = await add(token, formdata);
         if (!res.ok) {
             setload(false)
             toast.error("something went wrong");
             return;
         }
-        let data = await res.json();
         setform(false);
         setload(false)
         dispatch({ type: "ADD_SONG", data: data });
@@ -87,21 +80,12 @@ function SongForm({ setform, item }) {
 
     const updatesong = async (formdata) => {
         setload(true)
-
-        let res = await fetch(song + item._id, {
-            method: "PUT",
-            headers: {
-                "authorization": "berear " + token,
-            },
-            body: formdata
-        })
-
+        let { res, data } = await update(item._id, formdata, token);
         if (!res.ok) {
             setload(false)
             toast.error("something went wrong");
             return;
         }
-        let data = await res.json();
         setform(false);
         setload(false);
         dispatch({ type: "UPDATE_SONG", data: data });

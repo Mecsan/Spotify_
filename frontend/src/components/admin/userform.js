@@ -7,6 +7,7 @@ import { AuthContext } from '../../context/auth';
 import toast from 'react-hot-toast';
 import { AdminContext } from '../../context/admincontent';
 import Loader from './loader';
+import { add, update } from '../../services/user';
 
 function UserForm({ setform, item }) {
 
@@ -17,47 +18,26 @@ function UserForm({ setform, item }) {
     const updateuser = async () => {
         setload(true)
 
-        let res = await fetch(user + item._id, {
-            method: "PUT",
-            headers: {
-                "authorization": "berear " + token,
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(form.values)
-        })
-
+        let { res, data } = await update(item._id, token, JSON.stringify(form.values));
         if (!res.ok) {
             setload(false)
             toast.error("something went wrong");
             return;
         }
-        let data = await res.json();
         setform(false);
         setload(false)
-
         dispatch({ type: "UPDATE_USER", data: data });
         toast.success("user updated successfully");
     }
 
     const Adduser = async () => {
         setload(true)
-
-        let res = await fetch(user, {
-            method: "POST",
-            headers: {
-                "authorization": "berear " + token,
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(form.values)
-        })
-
+        let { res, data } = await add(token, JSON.stringify(form.values));
         if (!res.ok) {
             setload(false)
-
             toast.error("something went wrong");
             return;
         }
-        let data = await res.json();
         setload(false)
         setform(false);
         dispatch({ type: "ADD_USER", data: data });

@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react'
 import { useState } from 'react';
-import { profile } from '../config/api';
+import { info } from '../services/auth';
 export const AuthContext = createContext();
 
 function AuthProvider(props) {
@@ -31,13 +31,9 @@ function AuthProvider(props) {
     useEffect(() => {
 
         let fetchUser = async (token) => {
-            let res = await fetch(profile+"token", {
-                headers: {
-                    "authorization": "berear " + token
-                }
-            })
+            setload(true);
+            let {res,data} = await info(token);
             if (res.ok) {
-                let data = await res.json();
                 dispatch({ type: "SET_USER", data })
             } else {
                 // token was invalid

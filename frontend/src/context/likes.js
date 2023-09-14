@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useReducer, useState } from 'react'
-import { like } from '../config/api';
+import { getLikedSongs } from '../services/song';
 import { AuthContext } from './auth';
 export const LikeContext = createContext();
 function LikeProvider(props) {
@@ -37,12 +37,7 @@ function LikeProvider(props) {
     useEffect(() => {
         const getLikeSongs = async () => {
             setload(true);
-            let res = await fetch(like, {
-                headers: {
-                    "authorization": "berear " + token
-                }
-            })
-            let data = await res.json();
+            let { res, data } = await getLikedSongs(token);
             dispatch({ type: "SET_LIKES", data: data })
             setload(false)
         }

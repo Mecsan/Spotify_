@@ -3,15 +3,20 @@ const asyncHandler = require("express-async-handler");
 const Myerror = require("../helper/customErr");
 const jwt = require("jsonwebtoken");
 const { user } = require("../models/user");
+const { defultPlaylistImage } = require("../helper/constant");
 
 const addPlayList = asyncHandler(async (req, res) => {
-    let length = await playlist.countDocuments({ user: req.user, isAdmin: false });
-    let play = new playlist({
-        name: "playlist #" + (length + 1),
-        user: req.user,
-        image: "1667666762403.jpeg"
-    })
+    let body = JSON.parse(JSON.stringify(req.body));
+    console.log(body);
 
+    let obj = {
+        name: body.name || "playlist",
+        desc: body.desc || "",
+        image: req?.file?.filename || defultPlaylistImage,
+        user: req.user,
+    }
+
+    let play = new playlist(obj);
     await play.save();
     res.json(play);
 })
@@ -43,13 +48,6 @@ const getOnePlayList = asyncHandler(async (req, res) => {
     let auth = req.headers['authorization'];
     let token = auth?.split(" ")[1];
 
-    // in normal mode even if user is admin he wont have permission
-    // permission only allowed in dashboard
-    if (playlists.isAdmin) {
-        resObj['permission'] = false;
-        return res.json(resObj);
-    }
-
     if (!token) {
         resObj['permission'] = false;
         return res.json(resObj);
@@ -74,7 +72,7 @@ const dltPlayList = asyncHandler(async (req, res) => {
     }, {
         $pull: { "likedList": id }
     })
-    
+
     res.json({ msg: id })
 })
 
@@ -163,15 +161,15 @@ const getlikedList = asyncHandler(async (req, res) => {
     res.json(lists);
 })
 
-const getHomePlaylists = asyncHandler(async (req, res) => {
+const getAllPlaylists = asyncHandler(async (req, res) => {
     const limit = req.query.limit
-    let playlists = await playlist.find({ isAdmin: true, isPrivate: false }).sort("-createdAt").limit(
+    let playlists = await playlist.find({ isPrivate: false }).sort("-createdAt").limit(
         limit ? limit : 0
     );
     res.json(playlists);
 })
 
- 
+
 
 module.exports = {
     addPlayList,
@@ -181,7 +179,7 @@ module.exports = {
     getOnePlayList,
     addSongToPlaylist,
     RemoveSongFromPlaylist,
-    getHomePlaylists,
+    getAllPlaylists,
     likePlaylist,
     getlikedList,
     changeVisibility

@@ -4,14 +4,14 @@ import { BsFillPlayCircleFill } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { image, playlist } from '../config/api';
+import { getPlaylistSongs } from '../services/playlist';
 
 function Playitem({ item }) {
 
     const { dispatch } = useContext(ActiveContext)
 
     const fetchSongs = async () => {
-        let res = await fetch(playlist + item._id);
-        let data = await res.json();
+        let { res, data } = await getPlaylistSongs(item._id);
         if (data.playlists.songs.length == 0) {
             toast.error("no songs in playlist");
             return;

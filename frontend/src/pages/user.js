@@ -6,6 +6,7 @@ import Playitem from '../components/playItem';
 import { image, profile } from '../config/api';
 import Avatar from 'react-avatar';
 import Loading from '../components/loader';
+import { get } from '../services/user';
 
 function User() {
 
@@ -16,8 +17,7 @@ function User() {
     useEffect(() => {
         let fetchUser = async () => {
             setload(true)
-            let res = await fetch(profile + id);
-            let data = await res.json();
+            let { data } = await get(id);
             setuser({ ...data })
             setload(false)
         }

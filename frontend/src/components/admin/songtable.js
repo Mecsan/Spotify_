@@ -11,6 +11,7 @@ import { BsThreeDots, BsFillCaretRightFill } from 'react-icons/bs'
 import Options from '../options'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ActiveContext } from '../../context/active'
+import { delete_ } from '../../services/song'
 
 
 function SongTable({ songs, removeFrom, edit = null }) {
@@ -26,19 +27,13 @@ function SongTable({ songs, removeFrom, edit = null }) {
     let ans = window.confirm("are u sure wanted to delete?");
     if (ans == false) return;
     let tid = toast.loading("deleting song...");
-    let res = await fetch(song + key, {
-      method: "DELETE",
-      headers: {
-        "authorization": "berear " + token
-      }
-    })
+    let { res } = await delete_(key, token);
     if (res.ok) {
       dispatch({ type: "DELETE_SONG", data: key })
       toast.success("song deleleted", { id: tid });
     } else {
       toast.error("something went wrong", { id: tid })
     }
-
   }
   const playThis = (id) => {
     setactive({ type: "SET_ACTIVE", id });

@@ -6,6 +6,7 @@ import { useContext } from 'react'
 import { AdminContext } from '../../context/admincontent'
 import toast from 'react-hot-toast'
 import { AuthContext } from '../../context/auth'
+import { delete_ } from '../../services/user'
 
 function UserTable({ users, edit }) {
 
@@ -16,19 +17,13 @@ function UserTable({ users, edit }) {
     let ans = window.confirm("are u sure wanted to delete?");
     if (ans == false) return;
     let tid = toast.loading("deleting user ...")
-    let res = await fetch(user + key, {
-      method: "DELETE",
-      headers: {
-        "authorization": "berear " + token
-      }
-    })
+    const { res, data } = await delete_(key, token);
     if (res.ok) {
       dispatch({ type: "DELETE_USER", data: key })
       toast.success("user deleleted", { id: tid });
     } else {
       toast.error("something went wrong", { id: tid })
     }
-
   }
 
   return (

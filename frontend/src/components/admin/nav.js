@@ -35,12 +35,6 @@ function DashNav() {
                         <MdPerson color='white' />
                         <Link to="artists" >artists</Link>
                     </div>
-
-                    <div className={location.pathname == "/dashboard/playlists" ? "dash-link active" : "dash-link"}>
-                        <BiLibrary
-                            color='white' />
-                        <Link to="playlists" >Playlists</Link>
-                    </div>
                 </div>
 
             </div>

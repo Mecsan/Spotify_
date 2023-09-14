@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import Loading from '../components/loader';
 import Playitem from '../components/playItem';
-import { playlist } from '../config/api';
+import { getAll } from '../services/playlist';
 
 function Playlists() {
   const [playlists, setplaylists] = useState(null);
@@ -11,8 +11,7 @@ function Playlists() {
 
   const fetchPlaylists = async () => {
     setload(true);
-    let res = await fetch(playlist + "home");
-    let data = await res.json();
+    let { res, data } = await getAll();
     if (res.ok) {
       setplaylists(data);
     }

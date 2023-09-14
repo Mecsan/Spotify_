@@ -1,25 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { image, song as songApi } from '../config/api';
+import { image } from '../config/api';
 import { BsFillPlayCircleFill } from 'react-icons/bs';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { LikeContext } from '../context/likes';
-import { likeSong } from '../util/likesong';
 import { ActiveContext } from '../context/active';
 import { AuthContext } from '../context/auth';
-import Options from '../components/options';
-import { PlaylistContext } from '../context/playlist';
 import toast from 'react-hot-toast';
 import SongItem from '../components/songitem';
-import { artist as artistApi } from '../config/api';
 import SongTable from '../components/SongTable';
 import Loading from '../components/loader';
 import countTime from '../helper/countTime';
+import { get as getSong, likeSong } from '../services/song';
+import { get } from '../services/artist';
 
 function Song() {
 
     let { id } = useParams();
-    const { dispatch, islike: funIslike } = useContext(LikeContext);
+    const { likes, dispatch, islike: funIslike } = useContext(LikeContext);
     const { token } = useContext(AuthContext)
     const { dispatch: playSong } = useContext(ActiveContext);
 
@@ -33,8 +31,7 @@ function Song() {
     useEffect(() => {
         let fetchSong = async () => {
             setload(true);
-            let res = await fetch(songApi + id);
-            let data = await res.json();
+            let { data } = await getSong(id, token);
             setsong(data);
             setload(false)
         }
@@ -44,13 +41,20 @@ function Song() {
     }, [id])
 
     const fetchArtis = async (id) => {
-        let res = await fetch(artistApi + id);
-        let data = await res.json();
+        let { res, data } = await get(id);
         // move current song to 0th idx
         let temp = data?.songs?.filter(one => one._id != song._id)
-        data.songs = [song,...temp];
+        data.songs = [song, ...temp];
         setartist(data);
     }
+
+    useEffect(() => {
+        if(song && funIslike(song._id)){
+            setlike(true);
+        }else{
+            setlike(false);
+        }
+    }, [likes])
 
     useEffect(() => {
         if (song) {
@@ -69,7 +73,7 @@ function Song() {
         } else {
             tid = toast.loading("adding");
         }
-        await likeSong(song, token);
+        let { data, res } = await likeSong(song._id, token);
         if (islike) {
             dispatch({ type: "RM_LIKE", data: song._id })
             toast("Removed from liked", { id: tid })
@@ -77,8 +81,6 @@ function Song() {
             dispatch({ type: "ADD_LIKE", data: song })
             toast.success("Added to liked", { id: tid })
         }
-
-        setlike(pre => !pre);
     }
 
     const play = () => {

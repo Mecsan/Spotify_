@@ -9,7 +9,7 @@ const {
     getOnePlayList,
     addSongToPlaylist,
     RemoveSongFromPlaylist,
-    getHomePlaylists,
+    getAllPlaylists,
     likePlaylist,
     getlikedList,
     changeVisibility
@@ -22,7 +22,7 @@ const validateId = require('../middleware/valiadteId');
 Router.get("/", authenticate, getPlayLists);
 Router.post("/", authenticate, addPlayList);
 
-Router.get("/home", getHomePlaylists);
+Router.get("/all", getAllPlaylists);
 
 Router.get("/like/:id", authenticate, validateId, likePlaylist);
 Router.get("/like", authenticate, getlikedList);

@@ -2,10 +2,10 @@ import React from 'react'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { signin } from '../config/api';
 import { useContext } from 'react';
 import { AuthContext } from '../context/auth';
 import toast from 'react-hot-toast';
+import { signin } from '../services/auth';
 
 function Singin() {
     const { token, dispatch } = useContext(AuthContext);
@@ -23,15 +23,8 @@ function Singin() {
         validationSchema: schema,
         onSubmit: async () => {
             let tid = toast.loading("singing in...")
-            let res = await fetch(signin, {
-                method: "POST",
-                headers: {
-                    "content-type": "application/json",
-                },
-                body: JSON.stringify({ email: form.values.email, password: form.values.password })
-            })
-
-            let data = await res.json();
+            let body = { email: form.values.email, password: form.values.password }
+            let { res, data } =await  signin(body);
             if (!res.ok) {
                 let err = JSON.parse(data.msg);
                 form.setFieldError(err.field, err.msg);

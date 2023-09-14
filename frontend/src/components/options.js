@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import toast from 'react-hot-toast';
 import { songToPlaylist } from '../config/api';
 import { AuthContext } from '../context/auth';
+import { addSong } from '../services/playlist';
 
 function Options({ id, setoption = null, playlists, cuurentPid = null }) {
     // id = songid
@@ -12,14 +13,7 @@ function Options({ id, setoption = null, playlists, cuurentPid = null }) {
     const { token } = useContext(AuthContext);
 
     const addToPlayList = async (pid) => {
-        let res = await fetch(`${songToPlaylist}${pid}/${id}`, {
-            method: "POST",
-            headers: {
-                "authorization": "berear " + token
-            }
-        });
-
-        let data = await res.json();
+        const { res, data } = await addSong(pid, id, token);
         if (data?.success == false) {
             toast(`${data.msg}`);
         } else {

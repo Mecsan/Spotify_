@@ -4,6 +4,9 @@ import { useEffect } from 'react';
 import { useReducer } from 'react';
 import { createContext } from 'react'
 import { artist, playlist, song, user } from '../config/api';
+import { getArtists } from '../services/artist';
+import { getSongs } from '../services/song';
+import { getUsers } from '../services/user';
 import { AuthContext } from './auth';
 
 export const AdminContext = createContext();
@@ -115,46 +118,26 @@ function AdminProvider({ children }) {
     })
 
     let fetchSongs = async () => {
-        let res = await fetch(song);
-        let data = await res.json();
+        let {res,data} = await getSongs(); 
         if (res.ok) {
             dispatch({ type: "SET_SONGS", data })
         }
     }
     const fetchUsers = async () => {
-        let res = await fetch(user + "all/", {
-            headers: {
-                "authorization": "berear " + token
-            }
-        })
-        let data = await res.json();
+        let { res, data } = await getUsers(token);
         if (res.ok) {
             dispatch({ type: "SET_USERS", data: data });
         }
     }
     const fetchArtist = async () => {
-        let res = await fetch(artist);
-        let data = await res.json();
+        let { res, data } = await getArtists();
         dispatch({ type: "SET_ARTISTS", data });
-    }
-
-    const fetchAdminPlaylists = async () => {
-        let res = await fetch(playlist + "admin/", {
-            headers: {
-                "authorization": "berear " + token
-            }
-        })
-        let data = await res.json();
-        if (res.ok) {
-            dispatch({ type: "SET_PlAYLISTS", data: data });
-        }
     }
 
     useEffect(() => {
         fetchSongs();
         fetchUsers();
         fetchArtist();
-        fetchAdminPlaylists();
     }, [])
 
     return (

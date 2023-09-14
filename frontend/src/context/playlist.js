@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { playlist as playlistApi } from '../config/api';
+import { getLikedLists, getPlayLists } from '../services/playlist';
 import { AuthContext } from './auth';
 
 export const PlaylistContext = createContext();
@@ -84,23 +85,13 @@ function PlaylistProvider(props) {
     }
 
     const fetchPlaylist = async () => {
-        let res = await fetch(playlistApi, {
-            headers: {
-                "authorization": "berear " + token
-            }
-        });
-        let data = await res.json();
+        let { res, data } = await getPlayLists(token);
         return data;
     }
 
     const getLikedlist = async () => {
-        let res2 = await fetch(playlistApi + "like/", {
-            headers: {
-                "authorization": "berear " + token
-            }
-        });
-        let data2 = await res2.json();
-        return data2.map((one) => { return { ...one, like: true } });
+        let { res, data } = await getLikedLists(token);
+        return data.map((one) => { return { ...one, like: true } });
     }
 
     useEffect(() => {

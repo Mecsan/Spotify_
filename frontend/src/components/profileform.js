@@ -7,6 +7,7 @@ import { MdOutlineClose } from 'react-icons/md'
 import { RiImageEditLine } from 'react-icons/ri'
 import { image as imgapi, profile } from '../config/api';
 import { AuthContext } from '../context/auth';
+import { update } from '../services/auth';
 
 function ProfileForm({ close, item }) {
 
@@ -14,7 +15,7 @@ function ProfileForm({ close, item }) {
     const [image, setimage] = useState(null);
     const [name, setname] = useState(item.name);
     const [file, setfile] = useState(null)
-    const { dispatch } = useContext(AuthContext)
+    const { token, dispatch } = useContext(AuthContext)
 
     const getImage = (e) => {
         setfile(e.target.files[0]);
@@ -29,15 +30,7 @@ function ProfileForm({ close, item }) {
         let form = new FormData();
         form.append('name', name);
         form.append("image", file);
-
-        let res = await fetch(profile + "update", {
-            method: "PUT",
-            headers: {
-                "authorization": "berear " + localStorage.getItem('spoti')
-            },
-            body: form
-        });
-        let data = await res.json();
+        let { data } = await update(token, form);
         if (data.success == false) {
             toast.error(data.msg, { id: tid, duration: 3000 });
         } else {

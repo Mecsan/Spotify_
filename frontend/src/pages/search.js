@@ -3,13 +3,13 @@ import { FiSearch } from "react-icons/fi"
 import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import Nav from '../components/search/nav';
 import { useEffect } from 'react';
-import { search as searchapi } from '../config/api'
 import All from '../components/search/all';
 import { createContext } from 'react';
 import Songs from '../components/search/songs';
 import List from '../components/search/list';
 import Artist from '../components/search/artists';
 import Loading from '../components/loader';
+import { search as searchService } from '../services/search';
 export let searchContext = createContext();
 
 function Search() {
@@ -28,10 +28,7 @@ function Search() {
     if (!val) return;
     // console.log("searching for "+val)
     val = val.trim();
-
-    let res = await fetch(searchapi + `?q=${val}`);
-    let data = await res.json();
-
+    let { res, data } = await searchService(val);
     setartists(data.artists);
     setsongs(data.songs);
     setlists(data.playLists);
@@ -42,7 +39,7 @@ function Search() {
     navigate("?search=" + e.target.value);
   }
 
-  const setEmpty = ()=>{
+  const setEmpty = () => {
     setartists([]);
     setlists([]);
     setsongs([]);

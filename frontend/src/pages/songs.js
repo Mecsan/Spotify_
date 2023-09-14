@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import Loading from '../components/loader';
 import SongTable from '../components/SongTable';
-import { song } from '../config/api';
+import { getSongs } from '../services/song';
 
 function Songs() {
 
@@ -12,8 +12,7 @@ function Songs() {
 
   const fetchSongs = async () => {
     setload(true)
-    let res = await fetch(song);
-    let data = await res.json();
+    let { res, data } = await getSongs();
     if (res.ok) {
       setsongs(data);
     }

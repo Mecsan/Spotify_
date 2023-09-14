@@ -8,17 +8,16 @@ import { PlaylistContext } from '../context/playlist';
 import { ActiveContext } from '../context/active';
 import { AuthContext } from '../context/auth';
 import PlayListForm from '../components/form';
-import {  AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import Loading from '../components/loader';
-import usePlaylist from '../common/usePlaylist';
 import countTime from '../helper/countTime';
+import * as playlistService from '../services/playlist';
 function Playlist() {
 
   let { dispatch, currPlayList, isOwn, isliked: checkLike, playlists } = useContext(PlaylistContext)
 
   let { token } = useContext(AuthContext);
   let { dispatch: setactive } = useContext(ActiveContext);
-  let { update, delete_, get, removeSong, changeVis } = usePlaylist();
 
   let { id } = useParams();
   let travers = useNavigate();
@@ -35,7 +34,7 @@ function Playlist() {
 
   const removeFrom = async (key) => {
     let tid = toast.loading("removing song ...")
-    const res = await removeSong(id, key);
+    const { res } = await playlistService.removeSong(id, key, token);
     if (res.ok) {
       dispatch({ type: "REMOVE_SONG", data: key })
       toast.success("Removed successfully", { id: tid });
@@ -46,7 +45,7 @@ function Playlist() {
 
     let fethcPlayListInfo = async () => {
       setload(true);
-      const data = await get(id);
+      const { data } = await playlistService.get(id, token);
       setpermission(data.permission);
       dispatch({ type: "SET_CURR_PLAYLIST", data: data.playlists })
       setload(false)
@@ -66,27 +65,21 @@ function Playlist() {
   }
 
   const changeVisible = async () => {
-    let data = await changeVis(id, currPlayList.isPrivate ? "false" : "true");
-    dispatch({ type: 'SET_PRIVATE', data});
+    let { data } = await playlistService.changeVis(id, currPlayList.isPrivate ? "false" : "true", token);
+    dispatch({ type: 'SET_PRIVATE', data });
     toast.success(`${currPlayList.name} is now ${currPlayList.isPrivate ? "Public" : "Private"}`)
   }
 
   const deletePlaylist = async () => {
     let tid = toast.loading("deleting...")
-    const data = await delete_(id);
+    const { data } = await playlistService.delete_(id, token);
     toast.success("Delted successfully", { id: tid })
     dispatch({ type: "DELETE_PLAYLIST", data: data.msg })
     travers('/');
   }
 
   const likePlaylist = async () => {
-    let res = await fetch(playlist + "like/" + id, {
-      method: "GET",
-      headers: {
-        "authorization": "berear " + token
-      }
-    });
-    const data = await res.json();
+    let { data } = await playlistService.like(id, token);
     setlike(data.like);
     if (data.like) {
       dispatch({ type: "ADD_PLAYLIST", data: { like: true, ...currPlayList } });
@@ -95,7 +88,6 @@ function Playlist() {
       dispatch({ type: "DELETE_PLAYLIST", data: id });
       toast("Removed from library");
     }
-
   }
 
 
@@ -109,7 +101,7 @@ function Playlist() {
     const tid = toast.loading("updating task", {
       duration: 100000
     });
-    const data = await update(currPlayList._id, form);
+    const { data } = await playlistService.update(currPlayList._id, form, token);
     if (data.success == false) {
       toast.error(data.msg, { id: tid, duration: 3000 });
     } else {

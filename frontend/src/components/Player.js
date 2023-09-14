@@ -7,9 +7,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ActiveContext } from '../context/active'
 import { AuthContext } from '../context/auth'
 import { LikeContext } from '../context/likes';
-import { likeSong } from '../util/likesong'
 import { image, song } from '../config/api'
 import MobilePlayer from './mobileplayer'
+import { likeSong } from '../services/song'
 
 function Player() {
     const { likes, dispatch, islike: islikeFun } = useContext(LikeContext);
@@ -71,7 +71,7 @@ function Player() {
             tid = toast.loading("adding");
         }
         let item = list[idx]
-        await likeSong(item, token);
+        await likeSong(item._id, token);
         if (isliked) {
             dispatch({ type: "RM_LIKE", data: item._id })
             toast("Removed from liked", { id: tid })
@@ -92,11 +92,11 @@ function Player() {
     let fetchSongData = async () => {
 
         let url = song + "songdata/" + list[idx].song;
-        if(audioRef.current.src == url) return ;
-        
+        if (audioRef.current.src == url) return;
+
         setplay(false);
         audioRef.current.pause();
- 
+
         audioRef.current.src = url;
         setaudio({
             ...audio,
@@ -129,10 +129,10 @@ function Player() {
 
     const getTime = (time) => {
         let min = Math.floor(time / 60);
-        min = isNaN(min)?0:min;
+        min = isNaN(min) ? 0 : min;
         let sec = time % 60;
         sec = sec.toFixed(0).toString().padStart(2, '0');
-        sec = isNaN(sec)?0:sec;
+        sec = isNaN(sec) ? 0 : sec;
         return `${min}:${sec}`
     }
 
@@ -220,7 +220,7 @@ function Player() {
 
                                 <span className="total_time">
                                     {
-                                        getTime(audioRef.current ? audioRef.current.duration :0)
+                                        getTime(audioRef.current ? audioRef.current.duration : 0)
                                     }
                                 </span>
 

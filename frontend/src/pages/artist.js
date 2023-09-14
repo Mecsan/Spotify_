@@ -8,6 +8,7 @@ import { artist as artistApi, image as imageApi } from '../config/api';
 import { ActiveContext } from '../context/active';
 import toast from 'react-hot-toast';
 import Loading from '../components/loader';
+import { get } from '../services/artist';
 function Artist() {
 
     let { id } = useParams();
@@ -18,8 +19,7 @@ function Artist() {
 
     const fetchArtist = async () => {
         setload(true)
-        let res = await fetch(artistApi + id);
-        let data = await res.json();
+        let { data } = await get(id);
         setartist(data);
         setload(false)
     }
