@@ -24,7 +24,7 @@ function ProfileForm({ close, item }) {
     }
 
     const updateProfile = async () => {
-        const tid = toast.loading("updating task", {
+        const tid = toast.loading("updating profile", {
             duration: 100000
         });
         let form = new FormData();

@@ -98,7 +98,7 @@ function Playlist() {
   }
 
   const updatePlaylist = async (form) => {
-    const tid = toast.loading("updating task", {
+    const tid = toast.loading("updating playlist", {
       duration: 100000
     });
     const { data } = await playlistService.update(currPlayList._id, form, token);
