@@ -42,7 +42,7 @@ const getSongData = asyncHandler(async (req, res) => {
 
     let fileSize = song.length
 
-    let chunkSize = 500000// 500kb 
+    let chunkSize = 100000// 100kb 
 
     let range = req.headers.range;
     let start = 0, end;
@@ -53,26 +53,25 @@ const getSongData = asyncHandler(async (req, res) => {
     }
 
     end = Math.min(start + chunkSize, fileSize - 1);
-
-    if (start != end) {
-        const readstream = songBucket.openDownloadStreamByName(name, { start: start, end: end });
-        res.writeHead(206, {
-            'Accept-Ranges': 'bytes',
-            'Content-Range': 'bytes ' + start + '-' + end + '/' + fileSize,
-            'Content-Length': end - start,
-            'Content-Type': 'audio/mpeg',
-        });
-
-
-        readstream.pipe(res);
-
-        readstream.on("error", (e) => {
-            console.log(e);
-            res.send(e);
-        })
-    } else {
-        res.end();
+    
+    if (start >= end) {
+        return res.end();
     }
+
+    const readstream = songBucket.openDownloadStreamByName(name, { start: start, end: end });
+    res.writeHead(206, {
+        'Accept-Ranges': 'bytes',
+        'Content-Range': 'bytes ' + start + '-' + end + '/' + fileSize,
+        'Content-Length': end - start,
+        'Content-Type': 'audio/mpeg',
+    });
+
+    readstream.pipe(res);
+
+    readstream.on("error", (e) => {
+        console.log(e);
+        res.send(e);
+    })
 })
 
 const addsong = asyncHandler(async (req, res) => {
