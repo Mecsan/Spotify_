@@ -57,7 +57,7 @@ const login = asyncHandler(async (req, res) => {
 const info = asyncHandler(async (req, res) => {
     let { id } = req.params;
     let userinfo = await user.findOne({ _id: id }).select("name logo");
-    let playlists = await playlist.find({ user: id, isAdmin: false, isPrivate: false });
+    let playlists = await playlist.find({ user: id, isPrivate: false });
     res.json({ userinfo, playlists });
 })
 

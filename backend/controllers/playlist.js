@@ -22,7 +22,7 @@ const addPlayList = asyncHandler(async (req, res) => {
 })
 
 const getPlayLists = asyncHandler(async (req, res) => {
-    let playlists = await playlist.find({ user: req.user, isAdmin: false });
+    let playlists = await playlist.find({ user: req.user});
     res.json(playlists);
 })
 

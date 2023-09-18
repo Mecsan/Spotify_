@@ -7,7 +7,7 @@ import { addSong } from '../services/playlist';
 
 function Options({ id, setoption = null, playlists, cuurentPid = null }) {
     // id = songid
-    // playlists = user's playlists / admin playlist
+    // playlists = user's playlists
     // currentPid if any 
 
     const { token } = useContext(AuthContext);
