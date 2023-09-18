@@ -137,9 +137,8 @@ function Playlist() {
 
                     <div className="playlist_extra">
                       <span onClick={() => {
-                        if (currPlayList.isAdmin) return;
                         travers("/user/" + currPlayList.user._id);
-                      }}>{currPlayList?.isAdmin ? "✔ Spotify ✔" : currPlayList?.user?.name}</span>
+                      }}>{currPlayList?.user?.name}</span>
                       <span>{currPlayList?.createdAt?.substr(0, 4)}</span>
                       <span>{currPlayList?.songs?.length} songs</span>
                       <span> {countTime(currPlayList.songs)}</span>

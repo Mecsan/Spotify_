@@ -1,12 +1,12 @@
 import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import AdminProvider from '../context/admincontent'
-import Artists from './admin/artists'
-import BottomNav from '../components/admin/bottomnav'
-import DashNav from '../components/admin/nav'
-import DashHome from './admin/home'
-import Songs from './admin/songs'
-import Users from './admin/users'   
+import AdminProvider from '../../context/admincontent'
+import Artists from './artists'
+import BottomNav from '../../components/admin/bottomnav'
+import DashNav from '../../components/admin/nav'
+import DashHome from './home'
+import Songs from './songs'
+import Users from './users'   
 function DashBoard() {
     return (
         <AdminProvider>

@@ -27,12 +27,6 @@ function DashHome() {
             <MdPerson size={30} />
             <span>{artists.length} Artists</span>
           </Link>
-
-          <Link to="playlists" className="icon-link">
-            <MdPerson size={30} />
-            <span>{playlists.length} Playlists</span>
-          </Link>
-
         </div>
       </div>
     </div>

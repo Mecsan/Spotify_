@@ -12,7 +12,7 @@ import { Toaster } from 'react-hot-toast';
 import Song from './pages/song';
 import Artist from './pages/artist';
 import Queue from './pages/queue';
-import DashBoard from './pages/dashboard';
+import DashBoard from './pages/admin/dashboard';
 import AuthProtected from './protected/authProtected';
 import AdminProteced from './protected/adminProtected';
 import Singin from './pages/signin';
