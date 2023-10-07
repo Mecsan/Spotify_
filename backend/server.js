@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 require("./config/DbConnection");
+require("./config/redisConnect")
 
 const errhandler = require("./middleware/errmiddleware");
 
@@ -27,6 +28,8 @@ app.use("/api/playlist", playlistRoute);
 
 app.get("/api/search", searchAll);
 app.get("/api/image/:name", getImage);
+
+console.log({name:process.env.NODE_ENV})
 
 if (process.env.NODE_ENV == "production") {
     const staticPath  = path.resolve(__dirname,"..","frontend","build");

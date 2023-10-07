@@ -5,25 +5,47 @@ const Myerror = require("../helper/customErr");
 
 const { connection, mongo } = require("mongoose");
 const { playlist } = require("../models/playlist");
+const { redisBase } = require("../helper/constant");
+const client = require("../config/redisConnect");
 
 const getsongs = asyncHandler(async (req, res) => {
 
     let limit = req.query.limit;
+    let key = `${redisBase}:songs:all`;
+    if (limit) {
+        key = key + "?limit:" + limit
+    }
+    let cache = await client.get(key);
+    if(cache){
+        return res.json(JSON.parse(cache));
+    }
+
     let songs = await song.find().sort("-createdAt").limit(
         limit ? limit : 0
     ).populate({
         path: "artist",
         name: "logo name"
     });
+
+    await client.set(key,JSON.stringify(songs));
+    await client.expire(key,60);
+
     res.json(songs);
 })
 
 const getOnesong = asyncHandler(async (req, res) => {
     let { id } = req.params;
+    let key = `${redisBase}:song:${id}`;
+    let cache = await client.get(key);
+    if(cache){
+        return res.json(JSON.parse(cache));
+    }
+
     let oneSong = await song.findOne({ _id: id }).populate({
         path: "artist",
         select: "name logo"
     });
+    await client.set(key,JSON.stringify(oneSong));
     res.json(oneSong);
 })
 
@@ -53,7 +75,7 @@ const getSongData = asyncHandler(async (req, res) => {
     }
 
     end = Math.min(start + chunkSize, fileSize - 1);
-    
+
     if (start >= end) {
         return res.end();
     }
@@ -92,6 +114,8 @@ const addsong = asyncHandler(async (req, res) => {
         name: "logo name"
     })
 
+    let key = `${redisBase}:artist:${body.artist}`;
+    await client.del(key);
     res.json(fetchsong);
 })
 
@@ -105,11 +129,19 @@ const dltsong = asyncHandler(async (req, res) => {
     let dltFromLiked = await user.updateMany({ "liked": id }, {
         $pull: { "liked": id }
     })
+
+    let key = `${redisBase}:artist:${deleted.artist}`;
+    await client.del(key);
+
+    let songKey = `${redisBase}:song:${id}`;
+    await client.del(songKey);
+
     res.json({ msg: id });
 })
 
 const updatedsong = asyncHandler(async (req, res) => {
     let { id } = req.params;
+    let key = `${redisBase}:song:${id}`;
 
     let body = JSON.parse(JSON.stringify(req.body));
     let obj = {
@@ -130,6 +162,8 @@ const updatedsong = asyncHandler(async (req, res) => {
         path: "artist",
         name: "logo name"
     });
+    
+    await client.del(key);
     res.json(newSong);
 })
 

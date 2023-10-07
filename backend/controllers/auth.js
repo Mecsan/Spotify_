@@ -4,6 +4,8 @@ const asyncHandler = require("express-async-handler");
 const { user } = require("../models/user");
 const myerr = require("../helper/customErr");
 const { playlist } = require('../models/playlist');
+const { redisBase } = require('../helper/constant');
+const client = require('../config/redisConnect');
 
 const signup = asyncHandler(async (req, res) => {
 
@@ -56,9 +58,21 @@ const login = asyncHandler(async (req, res) => {
 
 const info = asyncHandler(async (req, res) => {
     let { id } = req.params;
+    let key = `${redisBase}:user:${id}`;
+    let cache = await client.get(key);
+
+    if (cache) {
+        return res.json(JSON.parse(cache));
+    }
+
     let userinfo = await user.findOne({ _id: id }).select("name logo");
     let playlists = await playlist.find({ user: id, isPrivate: false });
-    res.json({ userinfo, playlists });
+    const response = { userinfo, playlists };
+
+    await client.set(key,JSON.stringify(response));
+    await client.expire(key,60);
+    
+    res.json(response);
 })
 
 const verifyToken = asyncHandler(async (req, res) => {
@@ -77,7 +91,6 @@ const updateProfile = asyncHandler(async (req, res) => {
     if (req.file) {
         obj['logo'] = req.file.filename
     }
-
 
     let newUser = await user.findOneAndUpdate({ _id: req.user }, obj, { new: true });
     res.json(newUser);
