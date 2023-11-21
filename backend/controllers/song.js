@@ -1,3 +1,4 @@
+const { Queue } = require("bullmq")
 const { song } = require("../models/song");
 const { user } = require("../models/user")
 const asyncHandler = require("express-async-handler");
@@ -8,15 +9,31 @@ const { playlist } = require("../models/playlist");
 const { redisBase } = require("../helper/constant");
 const client = require("../config/redisConnect");
 
+
+let redisConnection = {
+    username: "default",
+    password: "kbtd1WvlSNe0QvwcYQX0AsGB6fU5M9mP",
+    host: "redis-16710.c212.ap-south-1-1.ec2.cloud.redislabs.com",
+    port: 16710
+}
+
+const processingQueue = new Queue(`${redisBase}:subtitles`, {
+    connection: redisConnection
+})
+
 const getsongs = asyncHandler(async (req, res) => {
 
     let limit = req.query.limit;
     let key = `${redisBase}:songs:all`;
+    let data ={
+        token :"dhsjhdjs",
+        name :"sanket"
+    }
     if (limit) {
         key = key + "?limit:" + limit
     }
     let cache = await client.get(key);
-    if(cache){
+    if (cache) {
         return res.json(JSON.parse(cache));
     }
 
@@ -27,8 +44,8 @@ const getsongs = asyncHandler(async (req, res) => {
         name: "logo name"
     });
 
-    await client.set(key,JSON.stringify(songs));
-    await client.expire(key,60);
+    await client.set(key, JSON.stringify(songs));
+    await client.expire(key, 60);
 
     res.json(songs);
 })
@@ -37,7 +54,7 @@ const getOnesong = asyncHandler(async (req, res) => {
     let { id } = req.params;
     let key = `${redisBase}:song:${id}`;
     let cache = await client.get(key);
-    if(cache){
+    if (cache) {
         return res.json(JSON.parse(cache));
     }
 
@@ -45,7 +62,7 @@ const getOnesong = asyncHandler(async (req, res) => {
         path: "artist",
         select: "name logo"
     });
-    await client.set(key,JSON.stringify(oneSong));
+    await client.set(key, JSON.stringify(oneSong));
     res.json(oneSong);
 })
 
@@ -107,7 +124,10 @@ const addsong = asyncHandler(async (req, res) => {
         image: req.files['photo'][0].filename,
         duration: body.duration
     });
+
     await newsong.save();
+
+    // processingQueue.add("generating subtitles for " + newsong.name, newsong.toObject());
 
     let fetchsong = await song.findOne({ _id: newsong._id }).populate({
         path: "artist",
@@ -162,7 +182,9 @@ const updatedsong = asyncHandler(async (req, res) => {
         path: "artist",
         name: "logo name"
     });
-    
+
+    processingQueue.add("generating subtitles for " + newSong.name, newSong.toObject());
+
     await client.del(key);
     res.json(newSong);
 })

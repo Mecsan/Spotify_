@@ -13,7 +13,7 @@ import Loading from '../components/loader';
 import countTime from '../helper/countTime';
 import { get as getSong, likeSong } from '../services/song';
 import { get } from '../services/artist';
-
+import lyrics from "../sub.json";
 function Song() {
 
     let { id } = useParams();
@@ -49,9 +49,9 @@ function Song() {
     }
 
     useEffect(() => {
-        if(song && funIslike(song._id)){
+        if (song && funIslike(song._id)) {
             setlike(true);
-        }else{
+        } else {
             setlike(false);
         }
     }, [likes])
@@ -136,6 +136,20 @@ function Song() {
                                 </div>
 
                                 <SongTable songs={[song]} />
+
+                                {
+                                    song.lyrics ?
+                                        <div className="lyrics">
+                                            <h1>Lyrics</h1>
+                                            <div className='lyrics-container'>
+                                                {
+                                                    song.lyrics.segments?.map((seg) => (
+                                                        <div className='lyrics-item'>{seg.text}</div>
+                                                    ))
+                                                }
+                                            </div>
+                                        </div> : null
+                                }
 
                                 {
                                     artist && artist.songs.filter((song, idx) => {
