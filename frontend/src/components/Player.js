@@ -91,7 +91,7 @@ function Player() {
 
     let fetchSongData = async () => {
 
-        let url = song + "songdata/" + list[idx].song;
+        let url = list[idx].song;
         if (audioRef.current.src == url) return;
 
         setplay(false);

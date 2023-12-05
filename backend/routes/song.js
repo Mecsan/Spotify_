@@ -13,7 +13,6 @@ const {
 const validateId = require("../middleware/valiadteId");
 const authenticate = require("../middleware/authmiddleware");
 const admin = require("../middleware/isadmin");
-const upload = require('../config/upload');
 
 Router.get("/", getsongs);
 
@@ -29,19 +28,11 @@ Router.get("/songdata/:name", getSongData);
 Router.post("/like/:id", validateId, authenticate, toggleLike);
 
 //admin
-Router.post("/", authenticate, admin,
-    upload.fields([
-        { name: 'photo', maxCount: 1 },
-        { name: 'data', maxCount: 1 }
-    ]),
-    addsong);
+Router.post("/", authenticate, admin, addsong);
 
 Router.delete("/:id", authenticate, admin, validateId, dltsong);
 
-Router.put("/:id", authenticate, admin, validateId, upload.fields([
-    { name: 'photo', maxCount: 1 },
-    { name: 'data', maxCount: 1 }
-]), updatedsong);
+Router.put("/:id", authenticate, admin, validateId, updatedsong);
 
 module.exports = Router;
 

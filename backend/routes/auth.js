@@ -1,5 +1,4 @@
 const Router = require('express').Router();
-const upload = require('../config/upload');
 const { signup,
     login,
     info,
@@ -17,7 +16,7 @@ Router.post("/signup", signup);
 Router.post("/login", login);
 
 Router.get("/token", authenticated, verifyToken)
-Router.put('/update', authenticated, upload.single('image'), updateProfile)
+Router.put('/update', authenticated, updateProfile)
 
 //admin
 Router.get("/all", authenticated, admin, getAllUSer);

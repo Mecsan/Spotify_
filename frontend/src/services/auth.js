@@ -38,9 +38,10 @@ export const update = async (token, form) => {
     let res = await fetch(API.profile + "update", {
         method: "PUT",
         headers: {
+            "content-type": "application/json",
             "authorization": "berear " + token
         },
-        body: form
+        body: JSON.stringify(form)
     });
     let data = await res.json();
     return { res, data }

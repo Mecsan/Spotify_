@@ -18,7 +18,7 @@ function Profile() {
                         <div className="artist_info pointer" onClick={() => setform(true)}>
                             {
                                 user.logo ?
-                                    <img className='rounded' src={image + user.logo} /> :
+                                    <img className='rounded' src={user.logo} /> :
                                     <Avatar name={user.name} />
                             }
                             <div className="text">

@@ -122,7 +122,7 @@ function Playlist() {
                 <div className={hasPermission ? "playlist_cont pointer" : "playlist_cont"
                 }>
                   <div className="playlist_img" onClick={openForm}>
-                    <img src={image + currPlayList.image} />
+                    <img src={currPlayList.image} />
                   </div>
                   <div className="playlist_info">
                     <span>

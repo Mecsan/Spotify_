@@ -23,6 +23,7 @@ import ARtists from './pages/artists';
 import BottomNav from './components/bottomnav';
 import User from './pages/user';
 import Profile from './pages/profile';
+import "./firebase"
 function App() {
 
   return (
@@ -94,7 +95,7 @@ function App() {
             <Route path='/signin' element={<Singin />} />
             <Route path='/signup' element={<Signup />} />
 
-            <Route path='*' element={<><Navigate to="/"/></>} />
+            <Route path='*' element={<><Navigate to="/" /></>} />
           </Routes>
         </Router>
       </div>

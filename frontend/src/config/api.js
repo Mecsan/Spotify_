@@ -14,7 +14,7 @@ export const song = baseUrl + "song/"
 
 export const profile = baseUrl + "user/"
 
-export const image = baseUrl + "image/"
+export const image =""
 
 export const artist = baseUrl + "artist/"
 

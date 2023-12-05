@@ -1,4 +1,3 @@
-const upload = require("../config/upload");
 const { getArtists, oneArtist, addArtist, updateArtist, dltArtist } = require("../controllers/artist");
 const authenticate = require("../middleware/authmiddleware");
 const isadmin = require("../middleware/isadmin");
@@ -10,9 +9,9 @@ router.get("/", getArtists);
 
 router.get("/:id", validateId, oneArtist);
 
-router.post("/", authenticate, isadmin, upload.single('image'), addArtist);
+router.post("/", authenticate, isadmin, addArtist);
 
-router.put("/:id", authenticate, isadmin, validateId, upload.single('image'), updateArtist);
+router.put("/:id", authenticate, isadmin, validateId, updateArtist);
 
 router.delete("/:id", authenticate, isadmin,validateId, dltArtist);
 

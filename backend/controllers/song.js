@@ -25,9 +25,9 @@ const getsongs = asyncHandler(async (req, res) => {
 
     let limit = req.query.limit;
     let key = `${redisBase}:songs:all`;
-    let data ={
-        token :"dhsjhdjs",
-        name :"sanket"
+    let data = {
+        token: "dhsjhdjs",
+        name: "sanket"
     }
     if (limit) {
         key = key + "?limit:" + limit
@@ -115,13 +115,13 @@ const getSongData = asyncHandler(async (req, res) => {
 
 const addsong = asyncHandler(async (req, res) => {
 
-    let body = JSON.parse(JSON.stringify(req.body));
+    let body = req.body;
 
     let newsong = new song({
         name: body.name,
         artist: body.artist,
-        song: req.files['data'][0].filename,
-        image: req.files['photo'][0].filename,
+        song: body.song,
+        image: body.image,
         duration: body.duration
     });
 
@@ -163,19 +163,19 @@ const updatedsong = asyncHandler(async (req, res) => {
     let { id } = req.params;
     let key = `${redisBase}:song:${id}`;
 
-    let body = JSON.parse(JSON.stringify(req.body));
+    let body = req.body;
     let obj = {
         name: body.name,
         artist: body.artist,
         duration: body.duration
     }
 
-    if (req.files['data']) {
-        obj['song'] = req.files['data'][0].filename;
+    if (body.song) {
+        obj['song'] = body.song
     }
 
-    if (req.files['photo']) {
-        obj['image'] = req.files['photo'][0].filename
+    if (body.image) {
+        obj['image'] = body.image
     }
 
     let newSong = await song.findOneAndUpdate({ _id: id }, obj, { new: true }).populate({
@@ -183,7 +183,7 @@ const updatedsong = asyncHandler(async (req, res) => {
         name: "logo name"
     });
 
-    processingQueue.add("generating subtitles for " + newSong.name, newSong.toObject());
+    // processingQueue.add("generating subtitles for " + newSong.name, newSong.toObject());
 
     await client.del(key);
     res.json(newSong);

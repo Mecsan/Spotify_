@@ -1,14 +1,14 @@
 import { useFormik } from 'formik';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useRef } from 'react';
 import { useContext } from 'react';
 import { useState } from 'react'
 import toast from 'react-hot-toast';
 import { MdOutlineClose } from 'react-icons/md'
 import { RiImageEditLine } from 'react-icons/ri'
-import { artist, image as imageapi } from '../../config/api';
 import { AdminContext } from '../../context/admincontent';
 import { AuthContext } from '../../context/auth';
+import useUpload from '../../hooks/useUpload';
 import { add, update } from '../../services/artist';
 import Loader from './loader';
 
@@ -18,16 +18,17 @@ function ArtistForm({ item, setform }) {
     const { token } = useContext(AuthContext);
     const { dispatch } = useContext(AdminContext)
 
-    const [image, setimage] = useState(null);
     const [imagefile, setimagefile] = useState(null);
     const [load, setload] = useState(false);
+
+    const { error, loading, progress, url } = useUpload('image', imagefile);
 
     const validate = (obj) => {
         if (obj.name == "") {
             toast.error("name is required");
             return false;
         }
-        if (obj.logo == "" && image == null) {
+        if (obj.logo == "" && url == null) {
             toast.error("upload photo of artist");
             return false;
         }
@@ -72,25 +73,36 @@ function ArtistForm({ item, setform }) {
             logo: item ? item.logo : ""
         },
         onSubmit: async (value) => {
-            if (!validate(value)) return;
-            let formdata = new FormData();
-            formdata.append("name", form.values.name);
-            formdata.append("image", imagefile);
+            if (!validate(value) || loading) return;
 
-            if (item == null) {
-                addArtist(formdata);
-            } else {
-                updateArtist(formdata)
+            let body = {
+                name: value.name,
+                logo: url
             }
 
+            if (item == null) {
+                addArtist(body);
+            } else {
+                updateArtist(body);
+            }
         }
     })
 
     const getImage = (e) => {
         setimagefile(e.target.files[0]);
-        let src = URL.createObjectURL(e.target.files[0]);
-        setimage(src);
     }
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error.message);
+        }
+    }, [error])
+
+    let clickInput = () => {
+        if (loading) return;
+        imageInput.current.click();
+    }
+
 
     return (
         <>
@@ -110,15 +122,27 @@ function ArtistForm({ item, setform }) {
 
                     <div className='body'>
                         <div className='image'>
-                            <div className="image_overlay" onClick={() => imageInput.current.click()}>
-                                <RiImageEditLine size={50} />
-                                <span>Choose image</span>
+                            <div className={loading ? "image_overlay upload_load" : "image_overlay"}
+
+                                style={(url || form.values.logo) ? {} : { opacity: 1 }} onClick={clickInput}>
+                                {
+                                    loading ? <div className="progress">
+                                        <div className="progress-val">
+                                            {progress + "%"}
+                                        </div>
+                                        <div className="progress-bar" style={{ width: progress + "%" }}></div>
+                                    </div> :
+                                        <>
+                                            <RiImageEditLine size={50} />
+                                            <span>Choose image</span>
+                                        </>
+                                }
                             </div>
                             {
-                                image ? <img src={image} /> :
+                                url ? <img src={url} /> :
                                     <>{
                                         form.values.logo ?
-                                            <img src={imageapi + form.values.logo} />
+                                            <img src={form.values.logo} />
                                             : null
                                     }
                                     </>
@@ -129,11 +153,11 @@ function ArtistForm({ item, setform }) {
 
                             <input type='text' name='name' placeholder='name' onChange={form.handleChange} value={form.values.name} />
 
-                            <input ref={imageInput} name='image' type="file" hidden onChange={getImage} />
+                            <input  accept='image/png,image/jpg,image/jpeg' ref={imageInput} name='image' type="file" hidden onChange={getImage} />
                         </div>
                     </div>
 
-                    <input type='submit' value={item == null ? "Add user" : "Update user"} onClick={() => form.submitForm()} className="submit" />
+                    <input type='submit' value={item == null ? "Add Artist" : "Update Artist"} onClick={() => form.submitForm()} className="submit" />
 
                 </div>
             </div>

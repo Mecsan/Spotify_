@@ -31,9 +31,10 @@ export const add = async (token, formdata) => {
     let res = await fetch(API.artist, {
         method: "POST",
         headers: {
+            "content-type": "application/json",
             "authorization": "berear " + token,
         },
-        body: formdata
+        body: JSON.stringify(formdata)
     })
     let data = await res.json();
     return { res, data }
@@ -43,9 +44,10 @@ export const update = async (id, token, formdata) => {
     let res = await fetch(API.artist + id, {
         method: "PUT",
         headers: {
+            "content-type": "application/json",
             "authorization": "berear " + token,
         },
-        body: formdata
+        body: JSON.stringify(formdata)
     })
     let data = await res.json();
     return { res, data }

@@ -7,12 +7,12 @@ const { defultPlaylistImage, redisBase } = require("../helper/constant");
 const client = require("../config/redisConnect");
 
 const addPlayList = asyncHandler(async (req, res) => {
-    let body = JSON.parse(JSON.stringify(req.body));
+    let body = req.body;
 
     let obj = {
         name: body.name || "playlist",
         desc: body.desc || "",
-        image: req?.file?.filename || defultPlaylistImage,
+        image: body.image || defultPlaylistImage,
         user: req.user,
     }
 
@@ -91,17 +91,15 @@ const dltPlayList = asyncHandler(async (req, res) => {
 const updatePlayList = asyncHandler(async (req, res) => {
     let { id } = req.params;
     let key = `${redisBase}:playlist:${id}`;
-
-    let body = JSON.parse(JSON.stringify(req.body));
+    let body = req.body;
 
     let obj = {
         name: body.name,
-        desc: body.desc
+        desc: body.desc,
     }
 
-    if (req.file) {
-        obj['image'] = req.file.filename
-    }
+    if(body.image)
+        obj.image = body.image;
 
     let updated = await playlist.findOneAndUpdate({ _id: id }, obj, { new: true }).populate({
         path: "songs",

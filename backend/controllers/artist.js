@@ -22,7 +22,7 @@ const getArtists = AsyncHandler(async (req, res) => {
     );
 
     await client.set(key, JSON.stringify(artists));
-    await client.expire(key,60);
+    await client.expire(key, 60);
     res.json(artists);
 })
 
@@ -50,23 +50,19 @@ const oneArtist = AsyncHandler(async (req, res) => {
 })
 
 const addArtist = AsyncHandler(async (req, res) => {
-    let body = JSON.parse(JSON.stringify(req.body));
-    if (req.file) {
-        body['logo'] = req.file.filename
-    }
-    let artist = new artistmodel(body);
+    let artist = new artistmodel(req.body);
     await artist.save();
     res.json(artist);
 })
 
 const updateArtist = AsyncHandler(async (req, res) => {
     let { id } = req.params
-    
 
-    let body = JSON.parse(JSON.stringify(req.body));
-    if (req.file) {
-        body['logo'] = req.file.filename
+    let body = req.body;
+    if (!body.logo) {
+        delete body.logo;
     }
+    
     let artist = await artistmodel.findOneAndUpdate({ _id: id }, body, { new: true });
 
     let key = `${redisBase}:artist:${id}`;
@@ -82,7 +78,7 @@ const dltArtist = AsyncHandler(async (req, res) => {
 
     let key = `${redisBase}:artist:${id}`;
     await client.del(key);
-    
+
     // use message queue for deleting all the cache song of artist
     res.json(id);
 })

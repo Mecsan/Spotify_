@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useContext } from 'react';
 import { useState } from 'react';
 import Avatar from 'react-avatar';
@@ -7,29 +7,52 @@ import { MdOutlineClose } from 'react-icons/md'
 import { RiImageEditLine } from 'react-icons/ri'
 import { image as imgapi, profile } from '../config/api';
 import { AuthContext } from '../context/auth';
+import useUpload from '../hooks/useUpload';
 import { update } from '../services/auth';
 
 function ProfileForm({ close, item }) {
 
     let imageInput = useRef(null);
-    const [image, setimage] = useState(null);
+
     const [name, setname] = useState(item.name);
     const [file, setfile] = useState(null)
-    const { token, dispatch } = useContext(AuthContext)
+    const { token, dispatch } = useContext(AuthContext);
+
+    const { error, loading, progress, url } = useUpload('image', file);
 
     const getImage = (e) => {
         setfile(e.target.files[0]);
-        let src = URL.createObjectURL(e.target.files[0]);
-        setimage(src);
     }
 
+    let clickInput = () => {
+        if (loading) return;
+        imageInput.current.click();
+    }
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error.message);
+        }
+    }, [error])
+
     const updateProfile = async () => {
+
+        if (loading) {
+            toast.error("Please wait ,logo is uploading");
+            return;
+        }
+        if (name == "") {
+            toast.error("invalid name")
+            return;
+        }
+
         const tid = toast.loading("updating profile", {
             duration: 100000
         });
-        let form = new FormData();
-        form.append('name', name);
-        form.append("image", file);
+        let form = {
+            name,
+            logo: url
+        }
         let { data } = await update(token, form);
         if (data.success == false) {
             toast.error(data.msg, { id: tid, duration: 3000 });
@@ -55,26 +78,38 @@ function ProfileForm({ close, item }) {
 
                 <div className='body'>
                     <div className='image'>
-                        <div className="image_overlay" onClick={() => imageInput.current.click()}>
-                            <RiImageEditLine size={50} />
-                            <span>Choose image</span>
+
+
+                        <div className={loading ? "image_overlay upload_load" : "image_overlay"} onClick={clickInput}>
+                            {
+                                loading ? <div className="progress">
+                                    <div className="progress-val">
+                                        {progress + "%"}
+                                    </div>
+                                    <div className="progress-bar" style={{ width: progress + "%" }}></div>
+                                </div> :
+                                    <>
+                                        <RiImageEditLine size={50} />
+                                        <span>Choose image</span>
+                                    </>
+                            }
                         </div>
                         {
-                            image == null ?
+                            url == null ?
                                 <>
                                     {
                                         item.logo ?
-                                            <img src={imgapi + item.logo} />
+                                            <img src={item.logo} />
                                             :
                                             <Avatar name={name} size={"100%"} />
                                     }
                                 </> :
-                                <img src={image} />
+                                <img src={url} />
                         }
                     </div>
                     <div className='input'>
                         <input type='text' placeholder='name' value={name} onChange={(e) => setname(e.target.value)} />
-                        <input ref={imageInput} name='image' type="file" hidden onChange={getImage} />
+                        <input accept='image/png,image/jpg,image/jpeg' ref={imageInput} name='image' type="file" hidden onChange={getImage} />
                     </div>
                 </div>
 

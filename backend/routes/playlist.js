@@ -1,5 +1,4 @@
 const Router = require('express').Router();
-const upload = require('../config/upload');
 
 const {
     addPlayList,
@@ -31,7 +30,7 @@ Router.get("/:id", validateId, getOnePlayList);
 
 Router.get("/:id/:action", authenticate, validateId, isOwner, changeVisibility)
 
-Router.put("/:id", authenticate, validateId, isOwner, upload.single('image'), updatePlayList);
+Router.put("/:id", authenticate, validateId, isOwner, updatePlayList);
 
 Router.delete("/:id", authenticate, validateId, isOwner, dltPlayList);
 

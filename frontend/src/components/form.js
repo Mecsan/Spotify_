@@ -3,41 +3,49 @@ import toast from 'react-hot-toast';
 import { MdOutlineClose } from 'react-icons/md'
 import { RiImageEditLine } from 'react-icons/ri'
 import { image as imgapi } from '../config/api';
+import useUpload from '../hooks/useUpload';
 
 function PlayListForm({ setform, item, update }) {
-  let [name, setname] = useState("");
-  let [desc, setdesc] = useState("");
+  let [name, setname] = useState(item.name);
+  let [desc, setdesc] = useState(item.desc);
+  let [file, setfile] = useState(null);
+
+  let imageInput = useRef(null);
+  const { error, loading, progress, url } = useUpload('image', file);
 
   useEffect(() => {
-    setdesc(item.desc);
-    setname(item.name)
-  }, [])
+    if (error) {
+      toast.error(error.message);
+    }
+  }, [error])
 
-  //image choosen by user
-  let [image, setimage] = useState(null);
-  let [file, setfile] = useState("");
-  let imageInput = useRef(null);
+  let clickInput = () => {
+    if (loading) return;
+    imageInput.current.click();
+  }
 
   const getImage = (e) => {
     setfile(e.target.files[0]);
-    let src = URL.createObjectURL(e.target.files[0]);
-    setimage(src);
   }
 
   const handleSubmit = () => {
+    if (loading) {
+      toast.error("Please wait, image is uploading");
+      return;
+    }
     if (name == "") {
       toast.error("invalid name")
       return;
     }
 
-    let form = new FormData();
-    form.append('name', name);
-    form.append("desc", desc);
-    form.append("image", file);
+    let body = {
+      name,
+      desc,
+      image: url
+    }
 
-    update(form);
+    update(body);
   }
-
 
   return (
     <div className="overlay" onClick={(e) => {
@@ -55,22 +63,32 @@ function PlayListForm({ setform, item, update }) {
 
         <div className='body'>
           <div className='image'>
-            <div className="image_overlay" onClick={() => imageInput.current.click()}>
-              <RiImageEditLine size={50} />
-              <span>Choose image</span>
+            <div className={loading ? "image_overlay upload_load" : "image_overlay"} onClick={clickInput}>
+              {
+                loading ? <div className="progress">
+                  <div className="progress-val">
+                    {progress + "%"}
+                  </div>
+                  <div className="progress-bar" style={{ width: progress + "%" }}></div>
+                </div> :
+                  <>
+                    <RiImageEditLine size={50} />
+                    <span>Choose image</span>
+                  </>
+              }
             </div>
             {
-              image == null ?
+              url == null ?
                 <>
-                  <img src={imgapi + item.image} />
+                  <img src={item.image} />
                 </> :
-                <img src={image} />
+                <img src={url} />
             }
           </div>
           <div className='input'>
             <input type='text' placeholder='name' value={name} onChange={(e) => setname(e.target.value)} />
             <textarea placeholder='enter description' value={desc} onChange={(e) => setdesc(e.target.value)} />
-            <input ref={imageInput} name='image' type="file" hidden onChange={getImage} />
+            <input accept='image/png,image/jpg,image/jpeg' ref={imageInput} name='image' type="file" hidden onChange={getImage} />
           </div>
         </div>
 

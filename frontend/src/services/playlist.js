@@ -4,9 +4,10 @@ export const update = async (id, form, token) => {
     let res = await fetch(API.playlist + id, {
         method: "PUT",
         headers: {
+            "content-type": "application/json",
             "authorization": "berear " + token
         },
-        body: form
+        body: JSON.stringify(form)
     });
     let data = await res.json();
     return { res, data };

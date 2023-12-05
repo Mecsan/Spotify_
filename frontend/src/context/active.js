@@ -5,6 +5,8 @@ export const ActiveContext = createContext();
 const lid = localStorage.getItem('activeidx');
 const llist = localStorage.getItem('activeList');
 
+console.log({ lid, llist })
+
 function ActiveProvider(props) {
 
     let [active, dispatch] = useReducer((state, action) => {
@@ -30,13 +32,17 @@ function ActiveProvider(props) {
     })
 
     useEffect(() => {
-        let list = JSON.stringify(active.list);
-        localStorage.setItem('activeList', list);
+        if (active.list) {
+            let list = JSON.stringify(active.list);
+            localStorage.setItem('activeList', list);
+        }
     }, [active.list])
 
     useEffect(() => {
-        let item = JSON.stringify(active.idx);
-        localStorage.setItem('activeidx', item);
+        if (active.idx) {
+            let item = JSON.stringify(active.idx);
+            localStorage.setItem('activeidx', item);
+        }
     }, [active.idx])
 
     const isQueued = (key) => {

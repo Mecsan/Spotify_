@@ -619,21 +619,43 @@ option {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.482);
+  transition: all 0.5s;
+  opacity: 0;
+  z-index: 11;
   backdrop-filter: blur(2px);
+  background-color: rgba(0, 0, 0, 0.482);
+}
+
+.upload_load {
   opacity: 1;
-  z-index: -1;
 }
 
 .image:hover .image_overlay {
-  z-index: 11;
+  opacity: 1;
+}
+
+.progress {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.progress-val {
+  align-self: center;
+}
+
+.progress-bar {
+  background-color: white;
+  height: 10px;
 }
 
 .image img {
   object-fit: cover;
   width: 100%;
   height: 100%;
-
 }
 
 .playlist_form .submit {
@@ -1273,6 +1295,25 @@ option {
   min-width: 100%;
 }
 
+.embedded {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.remove-songfile {
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+.song-progress {
+  background-color: #468a4967;
+  border-bottom: #131313;
+  position: absolute;
+  left: 0px;
+  height: 100%;
+}
+
 
 .choose-song {
   padding: 8px 10px;
@@ -1288,6 +1329,12 @@ option {
   justify-content: center;
   gap: 10px;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.semi-rounded {
+  border-radius: 30px;
 }
 
 .choose-song:hover {
@@ -1892,14 +1939,14 @@ option {
   align-items: center;
 }
 
-.lyrics-container{
+.lyrics-container {
   padding-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.lyrics-item{
+.lyrics-item {
   color: gray;
   font-size: 1.2rem;
   font-weight: 600;

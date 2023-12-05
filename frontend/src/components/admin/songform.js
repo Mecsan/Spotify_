@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MdOutlineClose } from 'react-icons/md'
 import { useFormik } from 'formik';
 import { RiImageEditLine } from 'react-icons/ri'
@@ -13,36 +13,69 @@ import toast from 'react-hot-toast'
 import { Oval } from 'react-loader-spinner';
 import Loader from './loader';
 import { add, update } from '../../services/song';
+import useUpload from '../../hooks/useUpload';
 
 function SongForm({ setform, item }) {
 
     const { artists, dispatch } = useContext(AdminContext);
     const { token } = useContext(AuthContext)
 
-    const [image, setimage] = useState(null);
     const [imagefile, setimagefile] = useState(null);
     const [songfile, setsongfile] = useState(null);
     const [load, setload] = useState(false);
 
+    const imageUpload = useUpload('image', imagefile);
+    const songUpload = useUpload('audio', songfile);
+
     const imageInput = useRef(null);
     const songInput = useRef(null);
 
+    useEffect(() => {
+        let error = imageUpload.error;
+        if (error) {
+            toast.error(error.message);
+        }
+    }, [imageUpload.error])
+
+    useEffect(() => {
+        let error = songUpload.error;
+        if (error) {
+            toast.error(error.message);
+        }
+    }, [songUpload.error])
+
+    useEffect(() => {
+        if (songUpload.url) {
+            form.setFieldValue('song', songUpload.url);
+            let forTime = new Audio(songUpload.url);
+            forTime.onloadedmetadata = () => {
+                let dura = Math.floor(forTime.duration);
+                form.setFieldValue('duration', dura);
+            }
+        }
+    }, [songUpload.url])
+
+    let clickImageInput = () => {
+        if (imageUpload.loading) return;
+        imageInput.current.click();
+    }
+
+    let clickSongInput = () => {
+        if (songUpload.loading) return;
+        songInput.current.click();
+    }
+
     const getImage = (e) => {
         setimagefile(e.target.files[0]);
-        let src = URL.createObjectURL(e.target.files[0]);
-        setimage(src);
     }
 
     const getsong = (e) => {
         // check for size of song
         setsongfile(e.target.files[0]);
-        let src = URL.createObjectURL(e.target.files[0]);
-        let forTime = new Audio(src);
-        forTime.onloadedmetadata = () => {
-            let dura = Math.floor(forTime.duration);
-            form.setFieldValue('duration', dura);
-        }
+        // let src = URL.createObjectURL(e.target.files[0]);
+
     }
+
 
     const valiadte = (obj) => {
         if (obj.name == "") {
@@ -53,11 +86,11 @@ function SongForm({ setform, item }) {
             toast.error("select any artist");
             return false;
         }
-        if (obj.image == null && imagefile == null) {
+        if (obj.image == null && imageUpload.url == null) {
             toast.error("choose image for song");
             return false;
         }
-        if (obj.song == null && songfile == null) {
+        if (obj.song == null) {
             toast.error("upload song file");
             return false;
         }
@@ -103,22 +136,32 @@ function SongForm({ setform, item }) {
 
         onSubmit: async () => {
             if (!valiadte(form.values)) return;
-            let formdata = new FormData();
-            formdata.append('duration', form.values.duration);
-            formdata.append("name", form.values.name);
-            formdata.append('artist', form.values.artist._id);
-            formdata.append("photo", imagefile);
-            formdata.append("data", songfile);
+            if (imageUpload.loading || songUpload.loading) {
+                toast.error("wait for upload to complete");
+                return;
+            }
+
+            let body = {
+                name: form.values.name,
+                artist: form.values.artist._id,
+                image: imageUpload.url,
+                song: form.values.song,
+                duration: form.values.duration
+            }
 
             if (item == null) {
-                addSong(formdata);
+                addSong(body);
             } else {
-                updatesong(formdata)
+                updatesong(body)
             }
 
         }
-
     })
+
+    const clearSong = () => {
+        form.setFieldValue('song', null);
+    }
+
     return (
         <>
             <div className="overlay" onClick={(e) => {
@@ -137,15 +180,27 @@ function SongForm({ setform, item }) {
 
                     <div className='body'>
                         <div className='image'>
-                            <div className="image_overlay" onClick={() => imageInput.current.click()}>
-                                <RiImageEditLine size={50} />
-                                <span>Choose image</span>
+                            <div style={
+                                imageUpload.url || form.values.image ? {} : { opacity: 1 }
+                            } className={imageUpload.loading ? "image_overlay upload_load" : "image_overlay"} onClick={clickImageInput}>
+                                {
+                                    imageUpload.loading ? <div className="progress">
+                                        <div className="progress-val">
+                                            {imageUpload.progress + "%"}
+                                        </div>
+                                        <div className="progress-bar" style={{ width: imageUpload.progress + "%" }}></div>
+                                    </div> :
+                                        <>
+                                            <RiImageEditLine size={50} />
+                                            <span>Choose image</span>
+                                        </>
+                                }
                             </div>
                             {
-                                image ? <img src={image} /> :
+                                imageUpload.url ? <img src={imageUpload.url} /> :
                                     <>{
                                         form.values.image ?
-                                            <img src={imageapi + form.values.image} />
+                                            <img src={form.values.image} />
                                             : null
                                     }
                                     </>
@@ -188,13 +243,26 @@ function SongForm({ setform, item }) {
 
 
 
-                            <input ref={imageInput} name='image' type="file" hidden onChange={getImage} />
+                            <input accept='image/png,image/jpg,image/jpeg' ref={imageInput} name='image' type="file" hidden onChange={getImage} />
 
-                            <input ref={songInput} name="song" type="file" hidden onChange={getsong} />
+                            <input accept='audio/mpeg' ref={songInput} name="song" type="file" hidden onChange={getsong} />
 
-                            <div className='choose-song' onClick={() => songInput.current.click()}> <FaCloudUploadAlt size={30} /> Choose song</div>
+
                             {
-                                songfile ? <span className='songinfo'>{songfile.name}</span> : null
+                                form.values.song ?
+                                    <div className="embedded">
+                                        <audio src={form.values.song} controls />
+                                        <div className="remove-songfile" onClick={clearSong}>
+                                            ❌
+                                        </div>
+                                    </div> :
+                                    <div className={songUpload.loading ? "choose-song semi-rounded" : 'choose-song'} onClick={clickSongInput}>
+                                        <FaCloudUploadAlt size={30} />
+                                        {songUpload.loading ? songUpload.progress + " %" : "Choose song"}
+                                        <div className="song-progress" style={{
+                                            width: songUpload.progress + "%"
+                                        }}></div>
+                                    </div>
                             }
                         </div>
                     </div>

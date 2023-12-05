@@ -82,14 +82,14 @@ const verifyToken = asyncHandler(async (req, res) => {
 
 const updateProfile = asyncHandler(async (req, res) => {
 
-    let body = JSON.parse(JSON.stringify(req.body));
+    let body =  req.body;
 
     let obj = {
         name: body.name,
     }
 
-    if (req.file) {
-        obj['logo'] = req.file.filename
+    if (body.logo) {
+        obj['logo'] = body.logo
     }
 
     let newUser = await user.findOneAndUpdate({ _id: req.user }, obj, { new: true });
