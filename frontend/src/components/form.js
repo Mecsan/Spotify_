@@ -16,6 +16,7 @@ function PlayListForm({ setform, item, update }) {
   useEffect(() => {
     if (error) {
       toast.error(error.message);
+      console.log(error)
     }
   }, [error])
 

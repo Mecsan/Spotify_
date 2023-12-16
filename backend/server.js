@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 require("./config/DbConnection");
-require("./config/redisConnect")
+require("./config/redisConnect");
 
 const errhandler = require("./middleware/errmiddleware");
 

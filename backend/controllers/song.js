@@ -1,4 +1,3 @@
-const { Queue } = require("bullmq")
 const { song } = require("../models/song");
 const { user } = require("../models/user")
 const asyncHandler = require("express-async-handler");
@@ -9,17 +8,8 @@ const { playlist } = require("../models/playlist");
 const { redisBase } = require("../helper/constant");
 const client = require("../config/redisConnect");
 
-
-let redisConnection = {
-    username: "default",
-    password: "kbtd1WvlSNe0QvwcYQX0AsGB6fU5M9mP",
-    host: "redis-16710.c212.ap-south-1-1.ec2.cloud.redislabs.com",
-    port: 16710
-}
-
-const processingQueue = new Queue(`${redisBase}:subtitles`, {
-    connection: redisConnection
-})
+let redisURL = process.env.REDIS_CONNECT || "";
+const parts = redisURL.split("@").reduce((acc, str) => [...acc, ...str.split(":")], []);
 
 const getsongs = asyncHandler(async (req, res) => {
 
@@ -127,7 +117,6 @@ const addsong = asyncHandler(async (req, res) => {
 
     await newsong.save();
 
-    // processingQueue.add("generating subtitles for " + newsong.name, newsong.toObject());
 
     let fetchsong = await song.findOne({ _id: newsong._id }).populate({
         path: "artist",
@@ -182,8 +171,6 @@ const updatedsong = asyncHandler(async (req, res) => {
         path: "artist",
         name: "logo name"
     });
-
-    // processingQueue.add("generating subtitles for " + newSong.name, newSong.toObject());
 
     await client.del(key);
     res.json(newSong);
